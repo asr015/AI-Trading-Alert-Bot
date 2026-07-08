@@ -1,40 +1,19 @@
-import os
-import requests
-import yfinance as yf
-from datetime import datetime
+from nifty import get_nifty_data
+from telegram_bot import send_message
 
-BOT_TOKEN = os.environ["BOT_TOKEN"]
-CHAT_ID = os.environ["CHAT_ID"]
-
-# Nifty 50 data
-nifty = yf.Ticker("^NSEI")
-data = nifty.history(period="2d")
-
-last_price = round(data["Close"].iloc[-1], 2)
-prev_close = round(data["Close"].iloc[-2], 2)
-
-change = round(last_price - prev_close, 2)
-change_pct = round((change / prev_close) * 100, 2)
-
-status = "🟢 OPEN" if datetime.now().hour >= 9 and datetime.now().hour < 15 else "🔴 CLOSED"
+data = get_nifty_data()
 
 message = f"""
-📊 AI Market Update
+📊 TradingASR AI
 
-📈 NIFTY 50 : {last_price}
-📉 Change : {change} ({change_pct}%)
+📈 NIFTY 50 : {data['price']}
+📉 Change : {data['change']} ({data['change_pct']}%)
 
-{status}
+{data['status']}
+
+🕒 {data['time']}
 
 🤖 Bot Status : Active ✅
 """
 
-url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
-
-requests.post(
-    url,
-    data={
-        "chat_id": CHAT_ID,
-        "text": message
-    }
-)
+send_message(message)

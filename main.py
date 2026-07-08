@@ -1,6 +1,8 @@
 from logger import log
 from telegram_bot import send_message
 from watchlist_runner import run_watchlist
+from market_summary import create_summary
+
 
 log("TradingASR AI Scanner Started")
 
@@ -8,8 +10,25 @@ try:
 
     results = run_watchlist()
 
-    message = "━━━━━━━━━━━━━━━━━━\n"
-    message += "📊 TradingASR AI Scanner\n\n"
+    summary = create_summary(results)
+
+    message = """
+━━━━━━━━━━━━━━━━━━
+📊 TradingASR AI Pro
+
+📈 MARKET SUMMARY
+
+Stocks Scanned : {total}
+
+🟢 Bullish : {bullish}
+🟡 Neutral : {neutral}
+🔴 Bearish : {bearish}
+
+
+🔥 TOP MOMENTUM STOCKS
+
+""".format(**summary)
+
 
     medals = ["🥇", "🥈", "🥉"]
 
@@ -17,23 +36,35 @@ try:
 
         reasons = "\n".join(stock["reasons"][:3])
 
-        message += (
-            f"{medals[i]} {stock['symbol']}\n"
-            f"Score : {stock['score']}/170\n"
-            f"{stock['signal']}\n"
-            f"Confidence : {stock['confidence']}\n\n"
-            f"{reasons}\n\n"
-        )
+        message += f"""
+{medals[i]} {stock['symbol']}
 
-    message += "━━━━━━━━━━━━━━━━━━\n"
-    message += "🤖 TradingASR AI Pro v0.8"
+Score : {stock['score']}/170
+
+{stock['signal']}
+
+Confidence : {stock['confidence']}
+
+{reasons}
+
+"""
+
+
+    message += """
+━━━━━━━━━━━━━━━━━━
+🤖 TradingASR AI Pro v0.9
+"""
+
 
     send_message(message)
 
     log("Scanner Completed")
 
+
 except Exception as e:
 
-    send_message(f"❌ Scanner Error\n\n{str(e)}")
+    send_message(
+        f"❌ Scanner Error\n\n{str(e)}"
+    )
 
     log(str(e))

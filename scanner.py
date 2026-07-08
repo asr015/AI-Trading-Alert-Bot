@@ -1,12 +1,10 @@
 import yfinance as yf
 
-def get_scanner_data(symbol):
+def get_stock_data(symbol):
 
     stock = yf.Ticker(symbol)
 
-    data = stock.history(
+    return stock.history(
         period="5d",
         interval="15m"
     )
-
-    return data

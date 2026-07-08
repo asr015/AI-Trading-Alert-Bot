@@ -1,16 +1,18 @@
-
 import os
-from telegram import Bot
+import requests
 
-BOT_TOKEN = os.environ.get("BOT_TOKEN")
-CHAT_ID = os.environ.get("CHAT_ID")
+BOT_TOKEN = os.environ["BOT_TOKEN"]
+CHAT_ID = os.environ["CHAT_ID"]
 
-def send_message():
-    bot = Bot(token=BOT_TOKEN)
-    bot.send_message(
-        chat_id=CHAT_ID,
-        text="Bot Working ✅\n\nGitHub → Telegram connection successful."
-    )
+url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
-if __name__ == "__main__":
-    send_message()
+response = requests.post(
+    url,
+    data={
+        "chat_id": CHAT_ID,
+        "text": "Bot Working Test ✅"
+    }
+)
+
+print(response.status_code)
+print(response.text)

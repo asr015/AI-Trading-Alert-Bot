@@ -16,19 +16,20 @@ def run_watchlist():
             if data.empty:
                 continue
 
-            score = calculate_score(data)
+            analysis = calculate_score(data)
 
-            signal = generate_signal(score)
+            signal = generate_signal(analysis["score"])
 
             results.append({
                 "symbol": symbol,
-                "score": score,
+                "score": analysis["score"],
                 "signal": signal["signal"],
-                "confidence": signal["confidence"]
+                "confidence": signal["confidence"],
+                "reasons": analysis["reasons"]
             })
 
         except Exception as e:
-            print(f"{symbol} : {e}")
+            print(f"{symbol}: {e}")
 
     results.sort(key=lambda x: x["score"], reverse=True)
 

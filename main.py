@@ -1,44 +1,45 @@
 from logger import log
 from telegram_bot import send_message
-from signal_engine import generate_signal
-from data_manager import get_market_data
+from watchlist_runner import run_watchlist
 
-log("TradingASR AI Started")
+log("TradingASR AI Scanner Started")
 
 try:
 
-    market = get_market_data()
+    results = run_watchlist()
 
-    score = 85
-    signal = generate_signal(score)
-
-    message = f"""
+    message = """
 ━━━━━━━━━━━━━━━━━━
-📊 TradingASR AI Pro
+📊 TradingASR AI Scanner
 
-📈 NIFTY : {market['nifty']['price']}
+"""
 
-📉 Change : {market['nifty']['change']} ({market['nifty']['change_pct']}%)
+    medals = ["🥇", "🥈", "🥉"]
 
-{market['market_status']}
+    for i, stock in enumerate(results):
 
-🧠 AI Signal : {signal['signal']}
+        message += f"""
+{medals[i]} {stock['symbol']}
 
-🎯 Confidence : {signal['confidence']}
+Score : {stock['score']}/100
 
-🕒 {market['nifty']['time']}
+{stock['signal']}
 
-🤖 Bot Status : Active
+Confidence : {stock['confidence']}
 
+"""
+
+    message += """
 ━━━━━━━━━━━━━━━━━━
+🤖 TradingASR AI Pro
 """
 
     send_message(message)
 
-    log("Telegram Message Sent")
+    log("Scanner Completed")
 
 except Exception as e:
 
-    send_message(f"❌ ERROR\n\n{str(e)}")
+    send_message(f"❌ Scanner Error\n\n{str(e)}")
 
     log(str(e))

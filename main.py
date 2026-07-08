@@ -8,31 +8,25 @@ try:
 
     results = run_watchlist()
 
-    message = """
-━━━━━━━━━━━━━━━━━━
-📊 TradingASR AI Scanner
-
-"""
+    message = "━━━━━━━━━━━━━━━━━━\n"
+    message += "📊 TradingASR AI Scanner\n\n"
 
     medals = ["🥇", "🥈", "🥉"]
 
     for i, stock in enumerate(results):
 
-        message += f"""
-{medals[i]} {stock['symbol']}
+        reasons = "\n".join(stock["reasons"][:3])
 
-Score : {stock['score']}/100
+        message += (
+            f"{medals[i]} {stock['symbol']}\n"
+            f"Score : {stock['score']}/170\n"
+            f"{stock['signal']}\n"
+            f"Confidence : {stock['confidence']}\n\n"
+            f"{reasons}\n\n"
+        )
 
-{stock['signal']}
-
-Confidence : {stock['confidence']}
-
-"""
-
-    message += """
-━━━━━━━━━━━━━━━━━━
-🤖 TradingASR AI Pro
-"""
+    message += "━━━━━━━━━━━━━━━━━━\n"
+    message += "🤖 TradingASR AI Pro v0.8"
 
     send_message(message)
 

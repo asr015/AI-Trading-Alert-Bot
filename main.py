@@ -1,25 +1,41 @@
-from option_chain import get_option_chain
+from logger import log
+from nifty import get_nifty_data
+from market_status import get_market_status
 from telegram_bot import send_message
 
-try:
-    data = get_option_chain()
+log("TradingASR AI Started")
 
-    records = len(data["records"]["data"])
+try:
+    data = get_nifty_data()
+    market_status = get_market_status()
 
     message = f"""
-✅ NSE Option Chain Connected
+━━━━━━━━━━━━━━━━━━
+📊 TradingASR AI Pro
 
-Total Strike Records : {records}
+📈 NIFTY 50 : {data['price']}
+📉 Change : {data['change']} ({data['change_pct']}%)
 
-TradingASR AI Ready 🚀
+{market_status}
+
+🕒 {data['time']}
+
+🤖 Bot Status : Active ✅
+
+Version : v0.5
+━━━━━━━━━━━━━━━━━━
 """
+
+    send_message(message)
+
+    log("Telegram Alert Sent Successfully")
 
 except Exception as e:
 
-    message = f"""
-❌ Option Chain Error
+    log(f"ERROR : {str(e)}")
+
+    send_message(f"""
+❌ TradingASR AI Error
 
 {str(e)}
-"""
-
-send_message(message)
+""")

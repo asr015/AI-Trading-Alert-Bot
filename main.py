@@ -39,7 +39,7 @@ Stocks Scanned : {total}
         message += f"""
 {medals[i]} {stock['symbol']}
 
-Score : {stock['score']}/170
+Score : {stock['score']}/270
 
 {stock['signal']}
 

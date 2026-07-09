@@ -41,7 +41,7 @@ Stocks Scanned : {total}
 
 Score : {stock['score']}/270
 
-{stock['signal']}
+{stock['verdict']}
 
 Confidence : {stock['confidence']}
 

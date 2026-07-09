@@ -1,0 +1,35 @@
+FNO_STOCKS = [
+    "RELIANCE.NS",
+    "HDFCBANK.NS",
+    "ICICIBANK.NS",
+    "SBIN.NS",
+    "AXISBANK.NS",
+    "KOTAKBANK.NS",
+    "TCS.NS",
+    "INFY.NS",
+    "HCLTECH.NS",
+    "WIPRO.NS",
+    "LT.NS",
+    "BHARTIARTL.NS",
+    "TATAMOTORS.NS",
+    "MARUTI.NS",
+    "M&M.NS",
+    "HAL.NS",
+    "BEL.NS",
+    "BDL.NS",
+    "RVNL.NS",
+    "IRFC.NS",
+    "IRCTC.NS",
+    "NTPC.NS",
+    "POWERGRID.NS",
+    "ONGC.NS",
+    "COALINDIA.NS",
+    "ADANIENT.NS",
+    "ADANIPORTS.NS",
+    "TRENT.NS",
+    "SIEMENS.NS",
+    "ULTRACEMCO.NS"
+]
+
+def get_watchlist():
+    return FNO_STOCKS

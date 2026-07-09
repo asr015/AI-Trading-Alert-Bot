@@ -4,7 +4,6 @@ from watchlist_runner import run_watchlist
 from market_summary import create_summary
 from option_chain import analyze_option_chain
 
-
 log("TradingASR AI Scanner Started")
 
 try:
@@ -40,25 +39,25 @@ Put Writing : {option['PutWriting']}
 """
 
     medals = [
-    "🥇",
-    "🥈",
-    "🥉",
-    "4️⃣",
-    "5️⃣",
-    "6️⃣",
-    "7️⃣",
-    "8️⃣",
-    "9️⃣",
-    "🔟"
-]
+        "🥇",
+        "🥈",
+        "🥉",
+        "4️⃣",
+        "5️⃣",
+        "6️⃣",
+        "7️⃣",
+        "8️⃣",
+        "9️⃣",
+        "🔟"
+    ]
 
-for i, stock in enumerate(results):
+    for i, stock in enumerate(results):
 
-    medal = medals[i] if i < len(medals) else f"{i+1}."
+        medal = medals[i] if i < len(medals) else f"{i+1}."
 
-    reasons = "\n".join(stock["reasons"][:3])
+        reasons = "\n".join(stock["reasons"][:3])
 
-    message += f"""
+        message += f"""
 {medal} {stock['symbol']}
 
 Score : {stock['score']}/270

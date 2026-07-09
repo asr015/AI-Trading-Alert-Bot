@@ -38,6 +38,8 @@ def run_watchlist():
 
                 "confidence": decision["confidence"],
 
+                "ai_reasons": decision["reasons"],
+
                 "entry": analysis["entry"],
 
                 "sl": analysis["sl"],

@@ -2,7 +2,6 @@ from master_ai_engine import final_ai_score
 from dynamic_watchlist import get_watchlist
 from scanner import get_stock_data
 from scanner_engine import calculate_score
-from ai_decision_engine import analyze_setup
 
 
 def run_watchlist():
@@ -18,27 +17,31 @@ def run_watchlist():
             if data.empty:
                 continue
 
+            # Technical Scanner
             analysis = calculate_score(data)
 
+            # AI Master Decision
             decision = final_ai_score(
-            symbol,
-            analysis["score"]
+                symbol,
+                analysis["score"]
             )
-            
 
             results.append({
 
                 "symbol": symbol,
 
-                "score": analysis["score"],
+                # Final AI Score
+                "score": decision["score"],
 
+                # Technical Reasons
                 "reasons": analysis["reasons"],
+
+                # AI Reasons
+                "ai_reasons": decision["reasons"],
 
                 "verdict": decision["verdict"],
 
                 "confidence": decision["confidence"],
-
-                "ai_reasons": decision["reasons"],
 
                 "entry": analysis["entry"],
 
@@ -54,7 +57,7 @@ def run_watchlist():
 
             print(f"{symbol}: {e}")
 
-    # Highest score first
+    # Highest Score First
     results.sort(
         key=lambda x: x["score"],
         reverse=True
@@ -69,7 +72,7 @@ def run_watchlist():
 
             filtered.append(stock)
 
-    # Agar koi high probability trade na mile
+    # Agar High Probability Trade na mile
     if len(filtered) == 0:
 
         filtered = results[:5]

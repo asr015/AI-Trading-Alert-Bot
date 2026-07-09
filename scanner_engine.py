@@ -168,6 +168,11 @@ def calculate_score(data):
     score += fvg_points
     reasons.extend(fvg_reasons)
 
+    news_points, news_reasons = news_score(data)
+
+    score += news_points
+    reasons.extend(news_reasons)
+    
     # ==========================================
     # RISK ENGINE
     # ==========================================

@@ -1,10 +1,15 @@
 import yfinance as yf
+from config import TIMEFRAME, PERIOD
+
 
 def get_stock_data(symbol):
 
     stock = yf.Ticker(symbol)
 
-    return stock.history(
-        period="5d",
-        interval="15m"
+    data = stock.history(
+        period=PERIOD,
+        interval=TIMEFRAME,
+        auto_adjust=True
     )
+
+    return data

@@ -1,44 +1,68 @@
 def analyze_setup(score, reasons):
 
-    smart_money = any(
-        "Smart" in r or
-        "Momentum Before Momentum" in r or
-        "Breakout" in r
-        for r in reasons
-    )
-
-    # Confidence
-    confidence = min(max(abs(score) // 2, 40), 95)
-
-    # Final Decision
+    confidence = 40
 
     if score >= 220:
-        verdict = "🚀 STRONG BULLISH"
+        confidence = 98
+
+    elif score >= 200:
+        confidence = 95
+
+    elif score >= 180:
+        confidence = 90
 
     elif score >= 150:
-        verdict = "🟢 HIGH PROBABILITY BULLISH"
+        confidence = 82
 
-    elif score >= 80:
-        verdict = "🟢 BULLISH"
+    elif score >= 100:
+        confidence = 65
 
     elif score <= -220:
-        verdict = "💥 STRONG BEARISH"
+        confidence = 98
+
+    elif score <= -200:
+        confidence = 95
+
+    elif score <= -180:
+        confidence = 90
 
     elif score <= -150:
-        verdict = "🔴 HIGH PROBABILITY BEARISH"
+        confidence = 82
 
-    elif score <= -80:
-        verdict = "🔴 BEARISH"
+    bullish = [
+        "Smart Money",
+        "Liquidity",
+        "Order Block",
+        "Breakout",
+        "BOS",
+        "FVG"
+    ]
+
+    bearish = [
+        "Smart Money Exit",
+        "Supply",
+        "CHOCH",
+        "Bearish Momentum",
+        "Distribution"
+    ]
+
+    bull = sum(any(x in r for x in bullish) for r in reasons)
+    bear = sum(any(x in r for x in bearish) for r in reasons)
+
+    if score >= 180:
+        verdict = "🔥 HIGH PROBABILITY BUY"
+
+    elif score >= 150:
+        verdict = "🟢 BUY"
+
+    elif score <= -180:
+        verdict = "🔥 HIGH PROBABILITY SELL"
+
+    elif score <= -150:
+        verdict = "🔴 SELL"
 
     else:
         verdict = "🟡 WAIT"
-
-    # Upgrade if Smart Money is present
-    if smart_money and score >= 150:
-        verdict += "\n🧠 Smart Money Confirmed"
-
-    if smart_money and score <= -150:
-        verdict += "\n🧠 Smart Money Selling"
 
     return {
         "verdict": verdict,

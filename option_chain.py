@@ -1,64 +1,52 @@
 from nse_engine import get_option_chain
 
-
 def analyze_option_chain():
 
-    data = get_option_chain()
+    try:
 
-    records = data["records"]["data"]
+        data = get_option_chain()
 
-    total_ce_oi = 0
-    total_pe_oi = 0
+        records = data["records"]["data"]
 
-    max_ce = 0
-    max_pe = 0
+        total_ce_oi = 0
+        total_pe_oi = 0
 
-    call_strike = None
-    put_strike = None
+        max_ce = 0
+        max_pe = 0
 
-    for row in records:
+        call_strike = "-"
+        put_strike = "-"
 
-        if "CE" in row:
+        for row in records:
 
-            ce = row["CE"]
+            if "CE" in row:
+                ce = row["CE"]
+                total_ce_oi += ce["openInterest"]
 
-            total_ce_oi += ce["openInterest"]
+                if ce["openInterest"] > max_ce:
+                    max_ce = ce["openInterest"]
+                    call_strike = row["strikePrice"]
 
-            if ce["openInterest"] > max_ce:
+            if "PE" in row:
+                pe = row["PE"]
+                total_pe_oi += pe["openInterest"]
 
-                max_ce = ce["openInterest"]
+                if pe["openInterest"] > max_pe:
+                    max_pe = pe["openInterest"]
+                    put_strike = row["strikePrice"]
 
-                call_strike = row["strikePrice"]
+        pcr = round(total_pe_oi / total_ce_oi, 2) if total_ce_oi else 0
 
+        return {
+            "PCR": pcr,
+            "CallWriting": call_strike,
+            "PutWriting": put_strike
+        }
 
-        if "PE" in row:
+    except Exception:
 
-            pe = row["PE"]
-
-            total_pe_oi += pe["openInterest"]
-
-            if pe["openInterest"] > max_pe:
-
-                max_pe = pe["openInterest"]
-
-                put_strike = row["strikePrice"]
-
-
-    if total_ce_oi == 0:
-
-        pcr = 0
-
-    else:
-
-        pcr = round(total_pe_oi / total_ce_oi, 2)
-
-
-    return {
-
-        "PCR": pcr,
-
-        "CallWriting": call_strike,
-
-        "PutWriting": put_strike
-
-    }
+        return {
+            "PCR": "N/A",
+            "CallWriting": "N/A",
+            "PutWriting": "N/A"
+        }

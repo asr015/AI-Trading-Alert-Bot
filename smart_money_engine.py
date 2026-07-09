@@ -1,50 +1,38 @@
-def smart_money_score(data):
+def smart_money_score(df):
+
+    last = df.iloc[-1]
+    prev = df.iloc[-2]
 
     score = 0
     reasons = []
 
-    if data.empty:
-        return {
-            "score": 0,
-            "reasons": ["No Data"]
-        }
-
-
-    last = data.iloc[-1]
-
-    avg_volume = data["Volume"].tail(20).mean()
-
-
-    # Volume Expansion
-    if last["Volume"] > avg_volume * 1.5:
+    # Smart Volume Entry
+    if last["Volume"] > prev["Volume"] * 1.8:
         score += 30
-        reasons.append("🟢 Smart Volume Entry")
+        reasons.append("🟢 Smart Volume")
 
+    # Bullish Institutional Candle
+    body = abs(last["Close"] - last["Open"])
 
-    # Big Bullish Candle
-    candle_size = abs(last["Close"] - last["Open"])
+    if body > (last["High"] - last["Low"]) * 0.60:
+        if last["Close"] > last["Open"]:
+            score += 25
+            reasons.append("🏦 Institutional Buying")
 
-    avg_candle = (
-        abs(data["Close"] - data["Open"])
-        .tail(20)
-        .mean()
-    )
-
-
-    if candle_size > avg_candle * 1.5 and last["Close"] > last["Open"]:
-        score += 30
-        reasons.append("🟢 Institutional Candle")
-
+    # Bearish Institutional Candle
+    if body > (last["High"] - last["Low"]) * 0.60:
+        if last["Close"] < last["Open"]:
+            score -= 25
+            reasons.append("🏦 Institutional Selling")
 
     # Breakout
-    previous_high = data["High"].tail(20).max()
+    if last["Close"] > df["High"].rolling(20).max().shift(1).iloc[-1]:
+        score += 35
+        reasons.append("🚀 Breakout")
 
-    if last["Close"] > previous_high:
-        score += 40
-        reasons.append("🚀 Breakout Detected")
+    # Breakdown
+    if last["Close"] < df["Low"].rolling(20).min().shift(1).iloc[-1]:
+        score -= 35
+        reasons.append("💥 Breakdown")
 
-
-    return {
-        "score": score,
-        "reasons": reasons
-  }
+    return score, reasons

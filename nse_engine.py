@@ -1,26 +1,30 @@
 import requests
+import time
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0 Safari/537.36",
+    "Accept": "*/*",
     "Accept-Language": "en-US,en;q=0.9",
-    "Accept": "application/json,text/html"
+    "Referer": "https://www.nseindia.com/option-chain",
+    "Origin": "https://www.nseindia.com",
+    "Connection": "keep-alive"
 }
 
 session = requests.Session()
 
 def get_option_chain():
 
-    # First request for cookies
+    # Get fresh cookies
     session.get(
-        "https://www.nseindia.com",
+        "https://www.nseindia.com/option-chain",
         headers=HEADERS,
         timeout=10
     )
 
-    url = "https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY"
+    time.sleep(1)
 
     response = session.get(
-        url,
+        "https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY",
         headers=HEADERS,
         timeout=10
     )

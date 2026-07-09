@@ -1,50 +1,46 @@
 def analyze_setup(score, reasons):
 
-    confidence = 0
-    verdict = "NO TRADE"
+    smart_money = any(
+        "Smart" in r or
+        "Momentum Before Momentum" in r or
+        "Breakout" in r
+        for r in reasons
+    )
 
-    # Score based confidence
-    if score >= 200:
-        confidence = 90
-
-    elif score >= 150:
-        confidence = 75
-
-    elif score >= 100:
-        confidence = 60
-
-    else:
-        confidence = 40
-
-
-    # Smart Money check
-    smart_money = False
-
-    for r in reasons:
-
-        if "Smart" in r or "Institutional" in r or "Breakout" in r:
-            smart_money = True
-
+    # Confidence
+    confidence = min(max(abs(score) // 2, 40), 95)
 
     # Final Decision
 
-    if score >= 150 and smart_money:
+    if score >= 220:
+        verdict = "🚀 STRONG BULLISH"
 
-        verdict = "🔥 MOMENTUM BEFORE MOMENTUM"
+    elif score >= 150:
+        verdict = "🟢 HIGH PROBABILITY BULLISH"
 
-    elif score >= 100:
+    elif score >= 80:
+        verdict = "🟢 BULLISH"
 
-        verdict = "🟢 WATCHLIST"
+    elif score <= -220:
+        verdict = "💥 STRONG BEARISH"
+
+    elif score <= -150:
+        verdict = "🔴 HIGH PROBABILITY BEARISH"
+
+    elif score <= -80:
+        verdict = "🔴 BEARISH"
 
     else:
+        verdict = "🟡 WAIT"
 
-        verdict = "🔴 NO TRADE"
+    # Upgrade if Smart Money is present
+    if smart_money and score >= 150:
+        verdict += "\n🧠 Smart Money Confirmed"
 
+    if smart_money and score <= -150:
+        verdict += "\n🧠 Smart Money Selling"
 
     return {
-
         "verdict": verdict,
-
         "confidence": f"{confidence}%"
-
-  }
+    }

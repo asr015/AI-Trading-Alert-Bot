@@ -1,3 +1,4 @@
+from fvg_engine import fvg_score
 from indicator_engine import calculate_indicators
 from smart_money_engine import smart_money_score
 from liquidity_engine import liquidity_score

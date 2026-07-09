@@ -1,4 +1,4 @@
-from watchlist import WATCHLIST
+from dynamic_watchlist import get_watchlist
 from scanner import get_stock_data
 from scanner_engine import calculate_score
 from ai_decision_engine import analyze_setup
@@ -8,7 +8,7 @@ def run_watchlist():
 
     results = []
 
-    for symbol in WATCHLIST:
+    for symbol in get_watchlist():
 
         try:
 

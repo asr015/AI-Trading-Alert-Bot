@@ -159,6 +159,15 @@ def calculate_score(data):
     reasons.extend(ob_reasons)
 
     # ==========================================
+    # FAIR VALUE GAP ENGINE
+    # ==========================================
+
+    fvg_points, fvg_reasons = fvg_score(df)
+
+    score += fvg_points
+    reasons.extend(fvg_reasons)
+
+    # ==========================================
     # RISK ENGINE
     # ==========================================
 

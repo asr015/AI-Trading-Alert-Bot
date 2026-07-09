@@ -8,6 +8,10 @@ log("TradingASR AI Scanner Started")
 
 try:
 
+    # ===========================
+    # Run Scanner
+    # ===========================
+
     results = run_watchlist()
 
     summary = create_summary(results)
@@ -16,7 +20,7 @@ try:
 
     message = f"""
 ━━━━━━━━━━━━━━━━━━
-📊 TradingASR AI Pro
+📊 TradingASR AI Pro v1.1
 
 📈 MARKET SUMMARY
 
@@ -34,7 +38,9 @@ Call Writing : {option['CallWriting']}
 
 Put Writing : {option['PutWriting']}
 
-🔥 TOP MOMENTUM STOCKS
+━━━━━━━━━━━━━━━━━━
+
+🔥 HIGH PROBABILITY TRADES
 
 """
 
@@ -50,29 +56,54 @@ Put Writing : {option['PutWriting']}
         "9️⃣",
         "🔟"
     ]
+        # ===========================
+    # HIGH PROBABILITY TRADES
+    # ===========================
 
     for i, stock in enumerate(results):
 
         medal = medals[i] if i < len(medals) else f"{i+1}."
 
-        reasons = "\n".join(stock["reasons"][:3])
+        trade = "🟢 BUY" if stock["score"] >= 0 else "🔴 SELL"
+
+        reasons = "\n".join(stock["reasons"][:4])
 
         message += f"""
 {medal} {stock['symbol']}
 
-Score : {stock['score']}/270
+{trade}
 
-{stock['verdict']}
+Score : {stock['score']}/270
 
 Confidence : {stock['confidence']}
 
+🎯 Entry : {stock['entry']}
+
+🛑 Stop Loss : {stock['sl']}
+
+🎯 Target 1 : {stock['target1']}
+
+🚀 Target 2 : {stock['target2']}
+
+Reason
+
 {reasons}
+
+━━━━━━━━━━━━━━━━━━
+"""
+
+    if len(results) == 0:
+
+        message += """
+
+❌ No High Probability Trade Found Today
 
 """
 
     message += """
-━━━━━━━━━━━━━━━━━━
-🤖 TradingASR AI Pro v1.0
+
+🤖 TradingASR AI Pro v1.1
+
 """
 
     send_message(message)
@@ -81,8 +112,14 @@ Confidence : {stock['confidence']}
 
 except Exception as e:
 
-    send_message(
-        f"❌ Scanner Error\n\n{str(e)}"
-    )
+    error = f"""
+
+❌ Scanner Error
+
+{str(e)}
+
+"""
+
+    send_message(error)
 
     log(str(e))

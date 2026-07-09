@@ -50,9 +50,9 @@ Put Writing : {option['PutWriting']}
     "8️⃣",
     "9️⃣",
     "🔟"
-    ]
+]
 
-    for i, stock in enumerate(results):
+for i, stock in enumerate(results):
 
     medal = medals[i] if i < len(medals) else f"{i+1}."
 

@@ -1,3 +1,4 @@
+from master_ai_engine import final_ai_score
 from dynamic_watchlist import get_watchlist
 from scanner import get_stock_data
 from scanner_engine import calculate_score

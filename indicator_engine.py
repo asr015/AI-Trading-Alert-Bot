@@ -2,28 +2,70 @@ import pandas as pd
 
 def calculate_indicators(data):
 
-    if data.empty:
-        return data
-
     df = data.copy()
 
-    # EMA 20
-    df["EMA20"] = df["Close"].ewm(span=20, adjust=False).mean()
+    # ========= EMA =========
 
-    # EMA 50
-    df["EMA50"] = df["Close"].ewm(span=50, adjust=False).mean()
+    df["EMA20"] = df["Close"].ewm(span=20).mean()
 
-    # RSI (14)
+    df["EMA50"] = df["Close"].ewm(span=50).mean()
+
+    df["EMA200"] = df["Close"].ewm(span=200).mean()
+
+    # ========= RSI =========
+
     delta = df["Close"].diff()
 
-    gain = delta.where(delta > 0, 0).rolling(window=14).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
+    gain = delta.clip(lower=0).rolling(14).mean()
+
+    loss = (-delta.clip(upper=0)).rolling(14).mean()
 
     rs = gain / loss
 
     df["RSI"] = 100 - (100 / (1 + rs))
 
-    # Fill NaN values
-    df = df.fillna(0)
+    # ========= MACD =========
+
+    ema12 = df["Close"].ewm(span=12).mean()
+
+    ema26 = df["Close"].ewm(span=26).mean()
+
+    df["MACD"] = ema12 - ema26
+
+    df["Signal"] = df["MACD"].ewm(span=9).mean()
+
+    # ========= VWAP =========
+
+    typical_price = (
+        df["High"] +
+        df["Low"] +
+        df["Close"]
+    ) / 3
+
+    df["VWAP"] = (
+        (typical_price * df["Volume"]).cumsum()
+        /
+        df["Volume"].cumsum()
+    )
+
+    # ========= ATR =========
+
+    hl = df["High"] - df["Low"]
+
+    hc = (df["High"] - df["Close"].shift()).abs()
+
+    lc = (df["Low"] - df["Close"].shift()).abs()
+
+    tr = pd.concat([hl, hc, lc], axis=1).max(axis=1)
+
+    df["ATR"] = tr.rolling(14).mean()
+
+    # ========= Relative Volume =========
+
+    df["RVOL"] = (
+        df["Volume"]
+        /
+        df["Volume"].rolling(20).mean()
+    )
 
     return df

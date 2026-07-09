@@ -1,7 +1,8 @@
 from watchlist import WATCHLIST
 from scanner import get_stock_data
 from scanner_engine import calculate_score
-from signal_engine import generate_signal
+from ai_decision_engine import analyze_setup
+
 
 def run_watchlist():
 
@@ -18,19 +19,32 @@ def run_watchlist():
 
             analysis = calculate_score(data)
 
-            signal = generate_signal(analysis["score"])
+            decision = analyze_setup(
+                analysis["score"],
+                analysis["reasons"]
+            )
 
             results.append({
+
                 "symbol": symbol,
+
                 "score": analysis["score"],
-                "signal": signal["signal"],
-                "confidence": signal["confidence"],
-                "reasons": analysis["reasons"]
+
+                "reasons": analysis["reasons"],
+
+                "verdict": decision["verdict"],
+
+                "confidence": decision["confidence"]
+
             })
 
         except Exception as e:
+
             print(f"{symbol}: {e}")
 
-    results.sort(key=lambda x: x["score"], reverse=True)
+    results.sort(
+        key=lambda x: x["score"],
+        reverse=True
+    )
 
     return results[:3]

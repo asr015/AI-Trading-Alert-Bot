@@ -1,13 +1,14 @@
 from indicator_engine import calculate_indicators
 from smart_money_engine import smart_money_score
 from liquidity_engine import liquidity_score
+from structure_engine import structure_score
 
 
 def calculate_score(data):
 
     df = calculate_indicators(data)
 
-    if len(df) < 2:
+    if len(df) < 25:
         return {
             "score": 0,
             "reasons": ["⚠️ Not enough Data"]
@@ -19,9 +20,9 @@ def calculate_score(data):
     score = 0
     reasons = []
 
-    # =========================
+    # ==========================================
     # BULLISH CONDITIONS
-    # =========================
+    # ==========================================
 
     if last["EMA20"] > last["EMA50"]:
         score += 30
@@ -67,9 +68,9 @@ def calculate_score(data):
         score += 40
         reasons.append("🚀 Momentum Before Momentum")
 
-    # =========================
+    # ==========================================
     # BEARISH CONDITIONS
-    # =========================
+    # ==========================================
 
     if last["EMA20"] < last["EMA50"]:
         score -= 30
@@ -114,29 +115,29 @@ def calculate_score(data):
         score -= 40
         reasons.append("💥 Bearish Momentum")
 
-    # =========================
-    # SMART MONEY
-    # =========================
+    # ==========================================
+    # SMART MONEY ENGINE
+    # ==========================================
 
     sm_score, sm_reasons = smart_money_score(df)
 
     score += sm_score
     reasons.extend(sm_reasons)
 
-    # =========================
+    # ==========================================
     # LIQUIDITY ENGINE
-    # =========================
+    # ==========================================
 
     liq_score, liq_reasons = liquidity_score(df)
 
     score += liq_score
     reasons.extend(liq_reasons)
 
-    # =========================
-    # FINAL RESULT
-    # =========================
+    # ==========================================
+    # STRUCTURE ENGINE
+    # ==========================================
 
-    return {
-        "score": score,
-        "reasons": reasons
-    }
+    structure_points, structure_reasons = structure_score(df)
+
+    score += structure_points
+    reasons.extend(structure

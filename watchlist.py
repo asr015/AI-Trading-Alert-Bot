@@ -1,20 +1,49 @@
 WATCHLIST = [
 
-    "BEL.NS",
-    "HAL.NS",
-    "RVNL.NS",
-    "IRFC.NS",
-    "BDL.NS",
-    "COCHINSHIP.NS",
-    "MAZDOCK.NS",
-    "BHEL.NS",
-    "NTPC.NS",
-    "NHPC.NS",
+# Banking
+"SBIN.NS",
+"HDFCBANK.NS",
+"ICICIBANK.NS",
+"AXISBANK.NS",
+"KOTAKBANK.NS",
 
-    "RELIANCE.NS",
-    "SBIN.NS",
-    "ICICIBANK.NS",
-    "HDFCBANK.NS",
-    "TATAMOTORS.NS",
+# IT
+"TCS.NS",
+"INFY.NS",
+"WIPRO.NS",
+"HCLTECH.NS",
+"TECHM.NS",
 
+# Auto
+"TATAMOTORS.NS",
+"MARUTI.NS",
+"M&M.NS",
+"EICHERMOT.NS",
+
+# Defence
+"HAL.NS",
+"BEL.NS",
+"BDL.NS",
+
+# PSU
+"NTPC.NS",
+"POWERGRID.NS",
+"COALINDIA.NS",
+"ONGC.NS",
+
+# Capital Goods
+"LT.NS",
+"SIEMENS.NS",
+
+# Railway
+"RVNL.NS",
+"IRFC.NS",
+"IRCTC.NS",
+
+# Others
+"RELIANCE.NS",
+"BHARTIARTL.NS",
+"ADANIENT.NS",
+"ADANIPORTS.NS",
+"TRENT.NS"
 ]

@@ -1,5 +1,5 @@
 # Telegram
-BOT_TOKEN = "YOUR_BOT_TOKEN"
+BOT_TOKEN = "8459764807:AAFfjEM6BLOlXFueCcMhiHh3CbvvpI9GmPw"
 CHAT_ID = "1661677752"
 
 # Scanner Settings

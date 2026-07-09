@@ -1,4 +1,5 @@
 from logger import log
+from option_chain_engine import analyze_option_chain
 from telegram_bot import send_message
 from watchlist_runner import run_watchlist
 from market_summary import create_summary
@@ -11,6 +12,7 @@ try:
     results = run_watchlist()
 
     summary = create_summary(results)
+    option = analyze_option_chain()
 
     message = """
 ━━━━━━━━━━━━━━━━━━
@@ -38,6 +40,17 @@ Stocks Scanned : {total}
 
         message += f"""
 {medals[i]} {stock['symbol']}
+message += f"""
+
+📊 OPTION CHAIN
+
+PCR : {option['PCR']}
+
+Call Writing : {option['CallWriting']}
+
+Put Writing : {option['PutWriting']}
+
+"""
 
 Score : {stock['score']}/270
 

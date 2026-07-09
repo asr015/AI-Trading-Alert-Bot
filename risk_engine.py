@@ -1,10 +1,22 @@
-def get_risk(score):
+def calculate_risk(score):
 
-    if score >= 90:
-        return "🟢 LOW"
+    if score >= 220:
 
-    elif score >= 75:
-        return "🟡 MEDIUM"
+        return {
+            "risk": "🟢 LOW",
+            "rr": "1:3"
+        }
+
+    elif score >= 160:
+
+        return {
+            "risk": "🟡 MEDIUM",
+            "rr": "1:2"
+        }
 
     else:
-        return "🔴 HIGH"
+
+        return {
+            "risk": "🔴 HIGH",
+            "rr": "Avoid Trade"
+        }

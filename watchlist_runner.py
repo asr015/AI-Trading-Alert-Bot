@@ -47,4 +47,4 @@ def run_watchlist():
         reverse=True
     )
 
-    return results[:3]
+    return results

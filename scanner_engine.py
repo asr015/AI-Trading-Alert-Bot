@@ -1,3 +1,4 @@
+from smart_money_engine import smart_money_score
 from indicator_engine import calculate_indicators
 
 def calculate_score(data):
@@ -92,6 +93,11 @@ def calculate_score(data):
         score -= 40
         reasons.append("💥 Bearish Momentum")
 
+   sm_score, sm_reason = smart_money_score(df)
+
+score += sm_score
+
+reasons.extend(sm_reason) 
     return {
         "score": score,
         "reasons": reasons

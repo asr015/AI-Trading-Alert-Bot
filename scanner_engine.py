@@ -3,6 +3,7 @@ from smart_money_engine import smart_money_score
 from liquidity_engine import liquidity_score
 from structure_engine import structure_score
 from order_block_engine import order_block_score
+from risk_engine import calculate_trade
 
 
 def calculate_score(data):
@@ -25,9 +26,9 @@ def calculate_score(data):
     score = 0
     reasons = []
 
-    # ==========================
-    # BULLISH
-    # ==========================
+    # ==========================================
+    # BULLISH CONDITIONS
+    # ==========================================
 
     if last["EMA20"] > last["EMA50"]:
         score += 30
@@ -39,7 +40,7 @@ def calculate_score(data):
 
     if last["RSI"] > 60:
         score += 30
-        reasons.append("✅ RSI Strong")
+        reasons.append("✅ Strong RSI")
 
     if last["MACD"] > last["Signal"]:
         score += 20
@@ -65,9 +66,17 @@ def calculate_score(data):
         score += 20
         reasons.append("✅ EMA Rising")
 
-    # ==========================
-    # BEARISH
-    # ==========================
+    if (
+        last["EMA20"] > last["EMA50"]
+        and last["RSI"] > 55
+        and last["Volume"] > prev["Volume"]
+    ):
+        score += 40
+        reasons.append("🚀 Momentum Before Momentum")
+
+    # ==========================================
+    # BEARISH CONDITIONS
+    # ==========================================
 
     if last["EMA20"] < last["EMA50"]:
         score -= 30
@@ -93,7 +102,10 @@ def calculate_score(data):
         score -= 20
         reasons.append("🔴 Bearish Candle")
 
-    if last["Volume"] > prev["Volume"] and last["Close"] < last["Open"]:
+    if (
+        last["Volume"] > prev["Volume"]
+        and last["Close"] < last["Open"]
+    ):
         score -= 20
         reasons.append("🔴 Selling Pressure")
 
@@ -101,69 +113,59 @@ def calculate_score(data):
         score -= 20
         reasons.append("🔴 EMA Falling")
 
-    # ==========================
-    # SMART MONEY
-    # ==========================
+    if (
+        last["EMA20"] < last["EMA50"]
+        and last["RSI"] < 45
+        and last["Volume"] > prev["Volume"]
+    ):
+        score -= 40
+        reasons.append("💥 Bearish Momentum")
 
-    sm_score, sm_reason = smart_money_score(df)
+    # ==========================================
+    # SMART MONEY ENGINE
+    # ==========================================
+
+    sm_score, sm_reasons = smart_money_score(df)
 
     score += sm_score
-    reasons.extend(sm_reason)
+    reasons.extend(sm_reasons)
 
-    # ==========================
-    # LIQUIDITY
-    # ==========================
+    # ==========================================
+    # LIQUIDITY ENGINE
+    # ==========================================
 
-    liq_score, liq_reason = liquidity_score(df)
+    liq_score, liq_reasons = liquidity_score(df)
 
     score += liq_score
-    reasons.extend(liq_reason)
+    reasons.extend(liq_reasons)
 
-    # ==========================
-    # STRUCTURE
-    # ==========================
+    # ==========================================
+    # STRUCTURE ENGINE
+    # ==========================================
 
-    st_score, st_reason = structure_score(df)
+    st_score, st_reasons = structure_score(df)
 
     score += st_score
-    reasons.extend(st_reason)
+    reasons.extend(st_reasons)
 
-    # ==========================
-    # ORDER BLOCK
-    # ==========================
+    # ==========================================
+    # ORDER BLOCK ENGINE
+    # ==========================================
 
-    ob_score, ob_reason = order_block_score(df)
+    ob_score, ob_reasons = order_block_score(df)
 
     score += ob_score
-    reasons.extend(ob_reason)
+    reasons.extend(ob_reasons)
 
-    # ==========================
-    # ENTRY / SL / TARGET
-    # ==========================
+    # ==========================================
+    # RISK ENGINE
+    # ==========================================
 
-    if score >= 0:
+    trade = calculate_trade(df, score)
 
-        entry = round(last["High"] + 0.10, 2)
-
-        sl = round(last["Low"], 2)
-
-        risk = entry - sl
-
-        target1 = round(entry + risk * 2, 2)
-
-        target2 = round(entry + risk * 3, 2)
-
-    else:
-
-        entry = round(last["Low"] - 0.10, 2)
-
-        sl = round(last["High"], 2)
-
-        risk = sl - entry
-
-        target1 = round(entry - risk * 2, 2)
-
-        target2 = round(entry - risk * 3, 2)
+    # ==========================================
+    # FINAL RESULT
+    # ==========================================
 
     return {
 
@@ -171,12 +173,12 @@ def calculate_score(data):
 
         "reasons": reasons,
 
-        "entry": entry,
+        "entry": trade["entry"],
 
-        "sl": sl,
+        "sl": trade["sl"],
 
-        "target1": target1,
+        "target1": trade["target1"],
 
-        "target2": target2
+        "target2": trade["target2"]
 
     }

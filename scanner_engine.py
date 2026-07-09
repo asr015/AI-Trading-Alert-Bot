@@ -1,16 +1,16 @@
 from indicator_engine import calculate_indicators
 from smart_money_engine import smart_money_score
+from liquidity_engine import liquidity_score
 
 
 def calculate_score(data):
 
     df = calculate_indicators(data)
 
-    # Data safety check
     if len(df) < 2:
         return {
             "score": 0,
-            "reasons": ["⚠️ Not enough data"]
+            "reasons": ["⚠️ Not enough Data"]
         }
 
     last = df.iloc[-1]
@@ -19,13 +19,13 @@ def calculate_score(data):
     score = 0
     reasons = []
 
-    # =====================================
+    # =========================
     # BULLISH CONDITIONS
-    # =====================================
+    # =========================
 
     if last["EMA20"] > last["EMA50"]:
         score += 30
-        reasons.append("✅ Above EMA20")
+        reasons.append("✅ EMA20 > EMA50")
 
     if last["EMA50"] > last["EMA200"]:
         score += 20
@@ -53,13 +53,11 @@ def calculate_score(data):
 
     if last["RVOL"] > 1.5:
         score += 20
-        reasons.append("✅ High Relative Volume")
+        reasons.append("✅ High RVOL")
 
     if last["EMA20"] > prev["EMA20"]:
         score += 20
         reasons.append("✅ EMA Rising")
-
-    # Momentum Before Momentum
 
     if (
         last["EMA20"] > last["EMA50"]
@@ -69,13 +67,13 @@ def calculate_score(data):
         score += 40
         reasons.append("🚀 Momentum Before Momentum")
 
-    # =====================================
+    # =========================
     # BEARISH CONDITIONS
-    # =====================================
+    # =========================
 
     if last["EMA20"] < last["EMA50"]:
         score -= 30
-        reasons.append("🔴 Below EMA50")
+        reasons.append("🔴 EMA20 < EMA50")
 
     if last["EMA50"] < last["EMA200"]:
         score -= 20
@@ -116,19 +114,27 @@ def calculate_score(data):
         score -= 40
         reasons.append("💥 Bearish Momentum")
 
-    # =====================================
-    # SMART MONEY ENGINE
-    # =====================================
+    # =========================
+    # SMART MONEY
+    # =========================
 
     sm_score, sm_reasons = smart_money_score(df)
 
     score += sm_score
-
     reasons.extend(sm_reasons)
 
-    # =====================================
-    # FINAL
-    # =====================================
+    # =========================
+    # LIQUIDITY ENGINE
+    # =========================
+
+    liq_score, liq_reasons = liquidity_score(df)
+
+    score += liq_score
+    reasons.extend(liq_reasons)
+
+    # =========================
+    # FINAL RESULT
+    # =========================
 
     return {
         "score": score,

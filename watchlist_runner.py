@@ -34,7 +34,15 @@ def run_watchlist():
 
                 "verdict": decision["verdict"],
 
-                "confidence": decision["confidence"]
+                "confidence": decision["confidence"],
+
+                "entry": analysis["entry"],
+
+                "sl": analysis["sl"],
+
+                "target1": analysis["target1"],
+
+                "target2": analysis["target2"]
 
             })
 
@@ -42,9 +50,24 @@ def run_watchlist():
 
             print(f"{symbol}: {e}")
 
+    # Highest score first
     results.sort(
         key=lambda x: x["score"],
         reverse=True
     )
 
-    return results
+    # Only High Probability Trades
+    filtered = []
+
+    for stock in results:
+
+        if stock["score"] >= 150 or stock["score"] <= -150:
+
+            filtered.append(stock)
+
+    # Agar koi high probability trade na mile
+    if len(filtered) == 0:
+
+        filtered = results[:5]
+
+    return filtered

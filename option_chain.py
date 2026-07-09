@@ -1,29 +1,64 @@
-import requests
+from nse_engine import get_option_chain
 
-BASE_URL = "https://www.nseindia.com"
-OPTION_CHAIN_URL = "https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY"
 
-HEADERS = {
-    "User-Agent": "Mozilla/5.0",
-    "Accept": "application/json",
-    "Accept-Language": "en-US,en;q=0.9",
-    "Referer": "https://www.nseindia.com/option-chain"
-}
+def analyze_option_chain():
 
-def get_option_chain():
+    data = get_option_chain()
 
-    session = requests.Session()
+    records = data["records"]["data"]
 
-    # Get cookies first
-    session.get(BASE_URL, headers=HEADERS, timeout=10)
+    total_ce_oi = 0
+    total_pe_oi = 0
 
-    # Fetch option chain
-    response = session.get(
-        OPTION_CHAIN_URL,
-        headers=HEADERS,
-        timeout=10
-    )
+    max_ce = 0
+    max_pe = 0
 
-    response.raise_for_status()
+    call_strike = None
+    put_strike = None
 
-    return response.json()
+    for row in records:
+
+        if "CE" in row:
+
+            ce = row["CE"]
+
+            total_ce_oi += ce["openInterest"]
+
+            if ce["openInterest"] > max_ce:
+
+                max_ce = ce["openInterest"]
+
+                call_strike = row["strikePrice"]
+
+
+        if "PE" in row:
+
+            pe = row["PE"]
+
+            total_pe_oi += pe["openInterest"]
+
+            if pe["openInterest"] > max_pe:
+
+                max_pe = pe["openInterest"]
+
+                put_strike = row["strikePrice"]
+
+
+    if total_ce_oi == 0:
+
+        pcr = 0
+
+    else:
+
+        pcr = round(total_pe_oi / total_ce_oi, 2)
+
+
+    return {
+
+        "PCR": pcr,
+
+        "CallWriting": call_strike,
+
+        "PutWriting": put_strike
+
+    }

@@ -2,7 +2,7 @@ from logger import log
 from telegram_bot import send_message
 from watchlist_runner import run_watchlist
 from market_summary import create_summary
-from option_chain_engine import analyze_option_chain
+from option_chain import analyze_option_chain
 
 
 log("TradingASR AI Scanner Started")

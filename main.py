@@ -39,14 +39,27 @@ Put Writing : {option['PutWriting']}
 
 """
 
-    medals = ["🥇", "🥈", "🥉"]
+    medals = [
+    "🥇",
+    "🥈",
+    "🥉",
+    "4️⃣",
+    "5️⃣",
+    "6️⃣",
+    "7️⃣",
+    "8️⃣",
+    "9️⃣",
+    "🔟"
+    ]
 
     for i, stock in enumerate(results):
 
-        reasons = "\n".join(stock["reasons"][:3])
+    medal = medals[i] if i < len(medals) else f"{i+1}."
 
-        message += f"""
-{medals[i]} {stock['symbol']}
+    reasons = "\n".join(stock["reasons"][:3])
+
+    message += f"""
+{medal} {stock['symbol']}
 
 Score : {stock['score']}/270
 

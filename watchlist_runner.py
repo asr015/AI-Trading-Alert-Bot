@@ -20,10 +20,11 @@ def run_watchlist():
 
             analysis = calculate_score(data)
 
-            decision = analyze_setup(
-                analysis["score"],
-                analysis["reasons"]
+            decision = final_ai_score(
+            symbol,
+            analysis["score"]
             )
+            
 
             results.append({
 

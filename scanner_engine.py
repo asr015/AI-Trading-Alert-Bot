@@ -209,3 +209,94 @@ def calculate_score(data):
         score += MOMENTUM
 
         reasons.append("🚀 Momentum Before Momentum")
+            # ==========================================
+    # SMART MONEY ENGINE
+    # ==========================================
+
+    sm_score, sm_reasons = smart_money_score(df)
+
+    score += sm_score
+
+    reasons.extend(sm_reasons)
+
+    # ==========================================
+    # LIQUIDITY ENGINE
+    # ==========================================
+
+    liq_score, liq_reasons = liquidity_score(df)
+
+    score += liq_score
+
+    reasons.extend(liq_reasons)
+
+    # ==========================================
+    # STRUCTURE ENGINE
+    # ==========================================
+
+    st_score, st_reasons = structure_score(df)
+
+    score += st_score
+
+    reasons.extend(st_reasons)
+
+    # ==========================================
+    # ORDER BLOCK ENGINE
+    # ==========================================
+
+    ob_score, ob_reasons = order_block_score(df)
+
+    score += ob_score
+
+    reasons.extend(ob_reasons)
+
+    # ==========================================
+    # FAIR VALUE GAP ENGINE
+    # ==========================================
+
+    fvg_score_value, fvg_reasons = fvg_score(df)
+
+    score += fvg_score_value
+
+    reasons.extend(fvg_reasons)
+
+    # ==========================================
+    # NEWS ENGINE
+    # ==========================================
+
+    news_points, news_reasons = news_score(data)
+
+    score += news_points
+
+    reasons.extend(news_reasons)
+
+    # ==========================================
+    # RISK ENGINE
+    # ==========================================
+
+    trade = calculate_trade(df, score)
+
+    # ==========================================
+    # SCORE LIMIT
+    # ==========================================
+
+    if score > 300:
+
+        score = 300
+
+    if score < -300:
+
+        score = -300
+
+    # ==========================================
+    # REMOVE DUPLICATE REASONS
+    # ==========================================
+
+    reasons = list(dict.fromkeys(reasons))
+
+    # ==========================================
+    # FINAL RESULT
+    # ==========================================
+
+    return {
+
+        "score": score

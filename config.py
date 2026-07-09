@@ -1,6 +1,6 @@
 # Telegram
 BOT_TOKEN = "YOUR_BOT_TOKEN"
-CHAT_ID = "YOUR_CHAT_ID"
+CHAT_ID = "1661677752"
 
 # Scanner Settings
 TIMEFRAME = "15m"

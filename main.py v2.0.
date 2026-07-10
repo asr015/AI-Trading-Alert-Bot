@@ -1,0 +1,178 @@
+# ==========================================
+# TradingASR AI Pro v2.0
+# File : main.py
+# ==========================================
+
+from logger import log
+from telegram_bot import send_message
+from watchlist_runner import run_watchlist
+from market_summary import create_summary
+from option_chain import analyze_option_chain
+from market_bias_engine import market_bias_score
+
+
+log("TradingASR AI Scanner Started")
+
+try:
+
+    # ==========================
+    # Scan Stocks
+    # ==========================
+
+    results = run_watchlist()
+
+    summary = create_summary(results)
+
+    # ==========================
+    # Option Chain
+    # ==========================
+
+    option = analyze_option_chain()
+
+    # ==========================
+    # Market Bias
+    # ==========================
+
+    bias_score, bias_reason = market_bias_score()
+
+    if bias_score > 0:
+        market_bias = "🟢 BULLISH"
+
+    elif bias_score < 0:
+        market_bias = "🔴 BEARISH"
+
+    else:
+        market_bias = "🟡 SIDEWAYS"
+
+    # ==========================
+    # Header
+    # ==========================
+
+    message = f"""
+━━━━━━━━━━━━━━━━━━
+📊 TradingASR AI Pro v2.0
+
+📈 MARKET SUMMARY
+
+Stocks Scanned : {summary['total']}
+
+🟢 Bullish : {summary['bullish']}
+🟡 Neutral : {summary['neutral']}
+🔴 Bearish : {summary['bearish']}
+
+━━━━━━━━━━━━━━━━━━
+
+🌍 MARKET BIAS
+
+{market_bias}
+
+━━━━━━━━━━━━━━━━━━
+
+📊 OPTION CHAIN
+
+PCR : {option['PCR']}
+
+Call Writing : {option['CallWriting']}
+
+Put Writing : {option['PutWriting']}
+
+━━━━━━━━━━━━━━━━━━
+
+🎯 HIGH PROBABILITY TRADES
+
+"""
+
+    medals = [
+        "🥇",
+        "🥈",
+        "🥉",
+        "4️⃣",
+        "5️⃣",
+        "6️⃣",
+        "7️⃣",
+        "8️⃣",
+        "9️⃣",
+        "🔟"
+    ]
+
+    # ==========================
+    # Stock Details
+    # ==========================
+
+    for i, stock in enumerate(results):
+
+        medal = medals[i] if i < len(medals) else f"{i+1}."
+
+        technical = "\n".join(stock["reasons"][:4])
+
+        ai = "\n".join(stock["ai_reasons"][:3])
+
+        message += f"""
+
+━━━━━━━━━━━━━━━━━━
+
+{medal} {stock['symbol']}
+
+{stock['verdict']}
+
+⭐ Score : {stock['score']}
+
+🎯 Confidence : {stock['confidence']}
+
+━━━━━━━━━━━━
+
+💰 ENTRY
+
+{stock['entry']}
+
+🛑 STOP LOSS
+
+{stock['sl']}
+
+🎯 TARGET 1
+
+{stock['target1']}
+
+🎯 TARGET 2
+
+{stock['target2']}
+
+━━━━━━━━━━━━
+
+📊 TECHNICAL
+
+{technical}
+
+━━━━━━━━━━━━
+
+🤖 AI ANALYSIS
+
+{ai}
+
+"""
+
+    message += """
+
+━━━━━━━━━━━━━━━━━━
+🤖 TradingASR AI Pro v2.0
+Powered by AI + Smart Money + Option Chain
+━━━━━━━━━━━━━━━━━━
+"""
+
+    send_message(message)
+
+    log("Scanner Completed")
+
+except Exception as e:
+
+    send_message(
+
+        f"""
+❌ Scanner Error
+
+{str(e)}
+"""
+
+    )
+
+    log(str(e))

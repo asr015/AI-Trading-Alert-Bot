@@ -1,15 +1,11 @@
-import requests
-
 def news_score(symbol):
+    """
+    News scoring engine.
+    Currently disabled.
+    Future: Connect NewsAPI / AlphaVantage / Finnhub.
+    """
 
     score = 0
     reasons = []
 
-    try:
-        # Future: News API integration
-        # response = requests.get(...)
-
-        return score, reasons
-
-    except Exception:
-        return 0, []
+    return score, reasons

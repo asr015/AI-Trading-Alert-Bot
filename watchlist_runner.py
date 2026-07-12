@@ -14,7 +14,8 @@ def run_watchlist():
 
             data = get_stock_data(symbol)
 
-            if data.empty:
+            # Safe Data Check
+            if data is None or data.empty:
                 continue
 
             # Technical Scanner
@@ -31,25 +32,25 @@ def run_watchlist():
                 "symbol": symbol,
 
                 # Final AI Score
-                "score": decision["score"],
+                "score": decision.get("score", 0),
 
                 # Technical Reasons
-                "reasons": analysis["reasons"],
+                "reasons": analysis.get("reasons", []),
 
                 # AI Reasons
-                "ai_reasons": decision["reasons"],
+                "ai_reasons": decision.get("reasons", []),
 
-                "verdict": decision["verdict"],
+                "verdict": decision.get("verdict", "Neutral"),
 
-                "confidence": decision["confidence"],
+                "confidence": decision.get("confidence", "Low"),
 
-                "entry": analysis["entry"],
+                "entry": analysis.get("entry", "N/A"),
 
-                "sl": analysis["sl"],
+                "sl": analysis.get("sl", "N/A"),
 
-                "target1": analysis["target1"],
+                "target1": analysis.get("target1", "N/A"),
 
-                "target2": analysis["target2"]
+                "target2": analysis.get("target2", "N/A")
 
             })
 
@@ -68,11 +69,11 @@ def run_watchlist():
 
     for stock in results:
 
-        if stock["score"] >= 150 or stock["score"] <= -150:
+        if abs(stock["score"]) >= 150:
 
             filtered.append(stock)
 
-    # Agar High Probability Trade na mile
+    # If no High Probability Trade found
     if len(filtered) == 0:
 
         filtered = results[:5]

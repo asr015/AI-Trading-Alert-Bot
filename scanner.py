@@ -1,5 +1,5 @@
 # ==========================================
-# TradingASR AI Pro v2.1
+# TradingASR AI Pro v2.2
 # File : scanner.py
 # ==========================================
 
@@ -29,14 +29,14 @@ def get_stock_data(symbol):
             threads=True
         )
 
+        # ==========================================
+        # FIX : yfinance MultiIndex Columns
+        # ==========================================
+        if isinstance(data.columns, pd.MultiIndex):
+            data.columns = data.columns.get_level_values(0)
+
         if data is None or data.empty:
             return pd.DataFrame()
-
-        # ===== DEBUG =====
-        print(f"\n===== {symbol} =====")
-        print(data.columns)
-        print(type(data.columns))
-        # =================
 
         _cache[symbol] = data
 

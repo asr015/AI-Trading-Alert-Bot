@@ -34,6 +34,9 @@ def get_stock_data(symbol):
 
         _cache[symbol] = data
 
+        print(data.columns)
+print(type(data.columns))
+
         return data
 
     except Exception as e:

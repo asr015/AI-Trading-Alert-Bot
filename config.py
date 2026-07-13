@@ -3,6 +3,22 @@
 # File : config.py
 # ==========================================
 
+import os
+
+# ==========================
+# Telegram Secrets
+# ==========================
+
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
+
+# ==========================
+# Scanner Settings
+# ==========================
+
+TIMEFRAME = "1d"
+PERIOD = "6mo"
+
 # ---------- Bullish ----------
 
 EMA_BULLISH = 30

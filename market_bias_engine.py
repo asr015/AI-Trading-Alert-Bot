@@ -1,3 +1,11 @@
+# ==========================================
+# TradingASR AI Pro v2.0
+# File : market_bias_engine.py
+# ==========================================
+
+from config import BULLISH_BIAS, BEARISH_BIAS
+
+
 def get_market_bias(bullish, bearish):
 
     total = bullish + bearish
@@ -27,3 +35,17 @@ def get_market_bias(bullish, bearish):
         "bias": "🟡 Sideways",
         "strength": "50%"
     }
+
+
+def market_bias_score():
+
+    """
+    Placeholder function for AI Master Engine.
+
+    Future:
+    This function can calculate market bias using
+    NIFTY, BANKNIFTY, Advance/Decline,
+    Sector Strength, VIX, etc.
+    """
+
+    return 0, []

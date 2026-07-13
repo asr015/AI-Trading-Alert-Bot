@@ -1,5 +1,11 @@
 from market_bias_engine import market_bias_score
-from option_chain import analyze_option_chain
+
+_option_cache = None
+
+
+def set_option_chain(option_data):
+    global _option_cache
+    _option_cache = option_data
 
 
 def final_ai_score(symbol, score):
@@ -13,73 +19,55 @@ def final_ai_score(symbol, score):
     bias_score, bias_reason = market_bias_score()
 
     score += bias_score
-
     reasons.extend(bias_reason)
 
     # ==========================
-    # Option Chain
+    # Cached Option Chain
     # ==========================
 
-    option = analyze_option_chain()
+    global _option_cache
 
-    pcr = option["PCR"]
+    if _option_cache:
 
-    if pcr != "N/A":
+        pcr = _option_cache.get("PCR", "N/A")
 
-        if pcr >= 1.20:
+        if pcr != "N/A":
 
-            score += 20
+            if pcr >= 1.20:
+                score += 20
+                reasons.append("🟢 Bullish PCR")
 
-            reasons.append("🟢 Bullish PCR")
-
-        elif pcr <= 0.80:
-
-            score -= 20
-
-            reasons.append("🔴 Bearish PCR")
+            elif pcr <= 0.80:
+                score -= 20
+                reasons.append("🔴 Bearish PCR")
 
     # ==========================
     # Final Decision
     # ==========================
 
     if score >= 250:
-
         verdict = "🚀 STRONG BUY"
-
         confidence = "98%"
 
     elif score >= 180:
-
         verdict = "🟢 BUY"
-
         confidence = "90%"
 
     elif score <= -250:
-
         verdict = "💥 STRONG SELL"
-
         confidence = "98%"
 
     elif score <= -180:
-
         verdict = "🔴 SELL"
-
         confidence = "90%"
 
     else:
-
         verdict = "🟡 WAIT"
-
         confidence = "60%"
 
     return {
-
         "score": score,
-
         "verdict": verdict,
-
         "confidence": confidence,
-
         "reasons": reasons
-
     }

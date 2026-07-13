@@ -1,132 +1,52 @@
-FNO_STOCKS = [
-    "RELIANCE.NS",
-    "HDFCBANK.NS",
-    "ICICIBANK.NS",
-    "SBIN.NS",
-    "AXISBANK.NS",
-    "KOTAKBANK.NS",
-    "INDUSINDBK.NS",
-    "BANKBARODA.NS",
-    "PNB.NS",
-    "CANBK.NS",
+# ==========================================
+# TradingASR AI Pro v2.0
+# File : dynamic_watchlist.py
+# ==========================================
 
-    "TCS.NS",
-    "INFY.NS",
-    "HCLTECH.NS",
-    "WIPRO.NS",
-    "TECHM.NS",
-    "LTIM.NS",
-    "PERSISTENT.NS",
-    "MPHASIS.NS",
-    "COFORGE.NS",
+import pandas as pd
 
-    "LT.NS",
-    "ULTRACEMCO.NS",
-    "GRASIM.NS",
-    "SHREECEM.NS",
-    "AMBUJACEM.NS",
-
-    "TATAMOTORS.NS",
-    "MARUTI.NS",
-    "M&M.NS",
-    "ASHOKLEY.NS",
-    "BAJAJ-AUTO.NS",
-    "HEROMOTOCO.NS",
-    "EICHERMOT.NS",
-
-    "HAL.NS",
-    "BEL.NS",
-    "BDL.NS",
-    "COCHINSHIP.NS",
-    "MAZDOCK.NS",
-
-    "RVNL.NS",
-    "IRFC.NS",
-    "IRCTC.NS",
-    "CONCOR.NS",
-
-    "NTPC.NS",
-    "POWERGRID.NS",
-    "NHPC.NS",
-    "ONGC.NS",
-    "COALINDIA.NS",
-    "BPCL.NS",
-    "IOC.NS",
-    "GAIL.NS",
-
-    "ADANIENT.NS",
-    "ADANIPORTS.NS",
-    "SIEMENS.NS",
-    "ABB.NS",
-    "CUMMINSIND.NS",
-
-    "SUNPHARMA.NS",
-    "DRREDDY.NS",
-    "CIPLA.NS",
-    "DIVISLAB.NS",
-    "LUPIN.NS"
-        "TRENT.NS",
-    "DMART.NS",
-    "VBL.NS",
-    "TITAN.NS",
-    "ASIANPAINT.NS",
-    "NESTLEIND.NS",
-    "HINDUNILVR.NS",
-    "ITC.NS",
-    "BRITANNIA.NS",
-    "TATACONSUM.NS",
-
-    "JSWSTEEL.NS",
-    "TATASTEEL.NS",
-    "HINDALCO.NS",
-    "JINDALSTEL.NS",
-    "SAIL.NS",
-    "VEDL.NS",
-    "NMDC.NS",
-    "NALCO.NS",
-
-    "BAJFINANCE.NS",
-    "BAJAJFINSV.NS",
-    "SBILIFE.NS",
-    "HDFCLIFE.NS",
-    "ICICIPRULI.NS",
-    "LICI.NS",
-    "CHOLAFIN.NS",
-    "SHRIRAMFIN.NS",
-    "RECLTD.NS",
-    "PFC.NS",
-
-    "DLF.NS",
-    "LODHA.NS",
-    "GODREJPROP.NS",
-    "OBEROIRLTY.NS",
-    "PRESTIGE.NS",
-
-    "PIDILITIND.NS",
-    "BERGEPAINT.NS",
-    "SRF.NS",
-    "PIIND.NS",
-    "DEEPAKNTR.NS",
-
-    "APOLLOHOSP.NS",
-    "MAXHEALTH.NS",
-    "FORTIS.NS",
-    "AUROPHARMA.NS",
-
-    "BHARTIARTL.NS",
-    "IDEA.NS",
-
-    "INDIGO.NS",
-    "ZOMATO.NS",
-    "SWIGGY.NS",
-
-    "MOTHERSON.NS",
-    "BOSCHLTD.NS",
-    "EXIDEIND.NS",
-    "UNIONBANK.NS",
-    "IDFCFIRSTB.NS",
-    "FEDERALBNK.NS"
-]
 
 def get_watchlist():
-    return FNO_STOCKS
+
+    try:
+
+        url = (
+            "https://archives.nseindia.com/content/fo/"
+            "fo_mktlots.csv"
+        )
+
+        df = pd.read_csv(url)
+
+        symbols = []
+
+        for symbol in df.iloc[:, 1]:
+
+            symbol = str(symbol).strip()
+
+            if (
+                symbol
+                and symbol != "SYMBOL"
+                and symbol != "nan"
+            ):
+                symbols.append(symbol + ".NS")
+
+        symbols = sorted(list(set(symbols)))
+
+        return symbols
+
+    except Exception as e:
+
+        print(f"Dynamic Watchlist Error: {e}")
+
+        return [
+            "RELIANCE.NS",
+            "HDFCBANK.NS",
+            "ICICIBANK.NS",
+            "SBIN.NS",
+            "TCS.NS",
+            "INFY.NS",
+            "HCLTECH.NS",
+            "LT.NS",
+            "BHARTIARTL.NS",
+            "TATAMOTORS.NS"
+        ]

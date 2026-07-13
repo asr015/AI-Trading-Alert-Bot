@@ -1,5 +1,5 @@
 # ==========================================
-# TradingASR AI Pro v2.0
+# TradingASR AI Pro v2.1
 # File : config.py
 # ==========================================
 
@@ -19,48 +19,50 @@ CHAT_ID = os.getenv("CHAT_ID")
 TIMEFRAME = "1d"
 PERIOD = "6mo"
 
-# ---------- Bullish ----------
+# ---------- Trend ----------
 
 EMA_BULLISH = 30
-EMA200_BULLISH = 20
-RSI_BULLISH = 30
-MACD_BULLISH = 20
-VWAP_BULLISH = 20
-CANDLE_BULLISH = 20
-VOLUME_BULLISH = 20
-RVOL_BULLISH = 20
-EMA_RISING = 20
-MOMENTUM = 40
-
-# ---------- Bearish ----------
+EMA200_BULLISH = 30
+EMA_RISING = 25
 
 EMA_BEARISH = -30
-EMA200_BEARISH = -20
-RSI_BEARISH = -30
-MACD_BEARISH = -20
+EMA200_BEARISH = -30
+EMA_FALLING = -25
+
+# ---------- Momentum ----------
+
+RSI_BULLISH = 25
+MACD_BULLISH = 25
+VWAP_BULLISH = 20
+CANDLE_BULLISH = 20
+VOLUME_BULLISH = 25
+RVOL_BULLISH = 25
+MOMENTUM = 50
+
+RSI_BEARISH = -25
+MACD_BEARISH = -25
 VWAP_BEARISH = -20
 CANDLE_BEARISH = -20
-SELLING = -20
-EMA_FALLING = -20
-BEARISH_MOMENTUM = -40
+SELLING = -25
+BEARISH_MOMENTUM = -50
 
 # ---------- Smart Money ----------
 
-SMART_ENTRY = 50
-SMART_EXIT = -50
+SMART_ENTRY = 60
+SMART_EXIT = -60
 
 # ---------- Liquidity ----------
 
-LIQUIDITY = 30
+LIQUIDITY = 40
 
 # ---------- Structure ----------
 
-BOS = 30
-CHOCH = -30
+BOS = 40
+CHOCH = -40
 
 # ---------- Order Block ----------
 
-ORDER_BLOCK = 30
+ORDER_BLOCK = 40
 
 # ---------- Fair Value Gap ----------
 
@@ -74,21 +76,21 @@ NEGATIVE_NEWS = -20
 
 # ---------- Market Bias ----------
 
-BULLISH_BIAS = 20
-BEARISH_BIAS = -20
+BULLISH_BIAS = 30
+BEARISH_BIAS = -30
 
 # ---------- Option Chain ----------
 
-PCR_BULLISH = 20
-PCR_BEARISH = -20
+PCR_BULLISH = 30
+PCR_BEARISH = -30
 
-# ---------- High Probability ----------
+# ---------- Final Score ----------
 
-BUY_SCORE = 180
-SELL_SCORE = -180
+BUY_SCORE = 220
+SELL_SCORE = -220
 
-STRONG_BUY = 250
-STRONG_SELL = -250
+STRONG_BUY = 300
+STRONG_SELL = -300
 
 # ---------- Risk Reward ----------
 

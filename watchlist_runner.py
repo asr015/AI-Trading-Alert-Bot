@@ -1,9 +1,14 @@
 # ==========================================
-# TradingASR AI Pro v2.1
+# TradingASR AI Pro v2.2
 # File : watchlist_runner.py
 # ==========================================
 
-from master_ai_engine import final_ai_score
+from master_ai_engine import (
+    final_ai_score,
+    set_option_chain
+)
+
+from option_chain import analyze_option_chain
 from dynamic_watchlist import get_watchlist
 from scanner import get_stock_data
 from scanner_engine import calculate_score
@@ -13,11 +18,27 @@ def run_watchlist():
 
     results = []
 
+    # ==========================
+    # Fetch Option Chain Only Once
+    # ==========================
+
+    option = analyze_option_chain()
+
+    set_option_chain(option)
+
+    # ==========================
+    # Get Watchlist
+    # ==========================
+
     watchlist = get_watchlist()
 
     total = len(watchlist)
 
     print(f"Scanning {total} F&O Stocks...")
+
+    # ==========================
+    # Start Scan
+    # ==========================
 
     for i, symbol in enumerate(watchlist, start=1):
 
@@ -41,42 +62,4 @@ def run_watchlist():
 
                 "symbol": symbol,
 
-                "score": decision.get("score", 0),
-
-                "reasons": analysis.get("reasons", []),
-
-                "ai_reasons": decision.get("reasons", []),
-
-                "verdict": decision.get("verdict", "Neutral"),
-
-                "confidence": decision.get("confidence", "Low"),
-
-                "entry": analysis.get("entry", "N/A"),
-
-                "sl": analysis.get("sl", "N/A"),
-
-                "target1": analysis.get("target1", "N/A"),
-
-                "target2": analysis.get("target2", "N/A")
-
-            })
-
-        except Exception as e:
-
-            print(f"{symbol}: {e}")
-
-    results.sort(
-        key=lambda x: abs(x["score"]),
-        reverse=True
-    )
-
-    filtered = [
-        stock
-        for stock in results
-        if abs(stock["score"]) >= 150
-    ]
-
-    if not filtered:
-        filtered = results[:5]
-
-    return filtered
+                "score":

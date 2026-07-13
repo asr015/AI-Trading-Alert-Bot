@@ -147,7 +147,7 @@ def calculate_score(data):
     score += sm_score
     reasons.extend(sm_reasons)
 
-    # ==========================================
+        # ==========================================
     # Liquidity Engine
     # ==========================================
 
@@ -193,11 +193,6 @@ def calculate_score(data):
     reasons.extend(news_reasons)
 
     # ==========================================
-    # Risk Engine
-    # ==========================================
-
-    trade = calculate_trade(df, score)
-        # ==========================================
     # SCORE LIMIT
     # ==========================================
 
@@ -206,6 +201,12 @@ def calculate_score(data):
 
     elif score < -300:
         score = -300
+
+    # ==========================================
+    # Risk Engine
+    # ==========================================
+
+    trade = calculate_trade(df, score)
 
     # ==========================================
     # REMOVE DUPLICATE REASONS

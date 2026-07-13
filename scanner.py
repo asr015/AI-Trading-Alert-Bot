@@ -32,10 +32,13 @@ def get_stock_data(symbol):
         if data is None or data.empty:
             return pd.DataFrame()
 
-        _cache[symbol] = data
-
+        # ===== DEBUG =====
+        print(f"\n===== {symbol} =====")
         print(data.columns)
-print(type(data.columns))
+        print(type(data.columns))
+        # =================
+
+        _cache[symbol] = data
 
         return data
 

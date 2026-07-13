@@ -3,19 +3,29 @@
 # File : dynamic_watchlist.py
 # ==========================================
 
+import requests
 import pandas as pd
-
+from io import StringIO
 
 def get_watchlist():
 
     try:
 
-        url = (
-            "https://archives.nseindia.com/content/fo/"
-            "fo_mktlots.csv"
+        url = "https://archives.nseindia.com/content/fo/fo_mktlots.csv"
+
+        headers = {
+            "User-Agent": "Mozilla/5.0"
+        }
+
+        response = requests.get(
+            url,
+            headers=headers,
+            timeout=20
         )
 
-        df = pd.read_csv(url)
+        response.raise_for_status()
+
+        df = pd.read_csv(StringIO(response.text))
 
         symbols = []
 
@@ -26,17 +36,15 @@ def get_watchlist():
             if (
                 symbol
                 and symbol != "SYMBOL"
-                and symbol != "nan"
+                and symbol.lower() != "nan"
             ):
                 symbols.append(symbol + ".NS")
 
-        symbols = sorted(list(set(symbols)))
-
-        return symbols
+        return sorted(list(set(symbols)))
 
     except Exception as e:
 
-        print(f"Dynamic Watchlist Error: {e}")
+        print("Dynamic Watchlist Error:", e)
 
         return [
             "RELIANCE.NS",

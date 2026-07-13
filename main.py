@@ -1,16 +1,23 @@
+# ==========================================
+# TradingASR AI Pro v2.0
+# File : main.py
+# Part 1 / 2
+# ==========================================
+
 from logger import log
 from telegram_bot import send_message
 from watchlist_runner import run_watchlist
 from market_summary import create_summary
 from option_chain import analyze_option_chain
 
+
 log("TradingASR AI Scanner Started")
 
 try:
 
-    # ===========================
+    # ==========================================
     # Run Scanner
-    # ===========================
+    # ==========================================
 
     results = run_watchlist()
 
@@ -20,7 +27,7 @@ try:
 
     message = f"""
 ━━━━━━━━━━━━━━━━━━
-📊 TradingASR AI Pro v1.1
+📊 TradingASR AI Pro v2.0
 
 📈 MARKET SUMMARY
 
@@ -29,6 +36,8 @@ Stocks Scanned : {summary['total']}
 🟢 Bullish : {summary['bullish']}
 🟡 Neutral : {summary['neutral']}
 🔴 Bearish : {summary['bearish']}
+
+━━━━━━━━━━━━━━━━━━
 
 📊 OPTION CHAIN
 
@@ -56,24 +65,26 @@ Put Writing : {option['PutWriting']}
         "9️⃣",
         "🔟"
     ]
-        # ===========================
+
+    # ==========================================
     # HIGH PROBABILITY TRADES
-    # ===========================
+    # ==========================================
 
     for i, stock in enumerate(results):
 
-        medal = medals[i] if i < len(medals) else f"{i+1}."
+        medal = medals[i] if i < len(medals) else f"{i + 1}."
 
         trade = "🟢 BUY" if stock["score"] >= 0 else "🔴 SELL"
 
         reasons = "\n".join(stock["reasons"][:4])
 
-        message += f"""
+        ai_reasons = "\n".join(stock.get("ai_reasons", [])[:2])
+                message += f"""
 {medal} {stock['symbol']}
 
 {trade}
 
-Score : {stock['score']}/270
+Score : {stock['score']}/300
 
 Confidence : {stock['confidence']}
 
@@ -85,12 +96,28 @@ Confidence : {stock['confidence']}
 
 🚀 Target 2 : {stock['target2']}
 
-Reason
+📌 Technical Reasons
 
 {reasons}
+"""
+
+        if ai_reasons:
+
+            message += f"""
+
+🤖 AI Confirmation
+
+{ai_reasons}
+"""
+
+        message += """
 
 ━━━━━━━━━━━━━━━━━━
 """
+
+    # ==========================================
+    # No Trade Found
+    # ==========================================
 
     if len(results) == 0:
 
@@ -98,12 +125,12 @@ Reason
 
 ❌ No High Probability Trade Found Today
 
+━━━━━━━━━━━━━━━━━━
 """
 
     message += """
 
-🤖 TradingASR AI Pro v1.1
-
+🤖 TradingASR AI Pro v2.0
 """
 
     send_message(message)

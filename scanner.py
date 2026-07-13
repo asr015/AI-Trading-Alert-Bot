@@ -1,5 +1,5 @@
 # ==========================================
-# TradingASR AI Pro v2.0
+# TradingASR AI Pro v2.1
 # File : scanner.py
 # ==========================================
 
@@ -8,21 +8,31 @@ import yfinance as yf
 
 from config import TIMEFRAME, PERIOD
 
+_cache = {}
+
 
 def get_stock_data(symbol):
 
+    global _cache
+
     try:
 
-        stock = yf.Ticker(symbol)
+        if symbol in _cache:
+            return _cache[symbol]
 
-        data = stock.history(
+        data = yf.download(
+            symbol,
             period=PERIOD,
             interval=TIMEFRAME,
-            auto_adjust=True
+            auto_adjust=True,
+            progress=False,
+            threads=True
         )
 
         if data is None or data.empty:
             return pd.DataFrame()
+
+        _cache[symbol] = data
 
         return data
 

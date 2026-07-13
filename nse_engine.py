@@ -1,8 +1,17 @@
-import requests
+# ==========================================
+# TradingASR AI Pro v2.0
+# File : nse_engine.py
+# ==========================================
+
 import time
+import requests
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0 Safari/537.36",
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/137.0 Safari/537.36"
+    ),
     "Accept": "*/*",
     "Accept-Language": "en-US,en;q=0.9",
     "Referer": "https://www.nseindia.com/option-chain",
@@ -12,23 +21,36 @@ HEADERS = {
 
 session = requests.Session()
 
+
 def get_option_chain():
 
-    # Get fresh cookies
-    session.get(
-        "https://www.nseindia.com/option-chain",
-        headers=HEADERS,
-        timeout=10
-    )
+    for attempt in range(3):
 
-    time.sleep(1)
+        try:
 
-    response = session.get(
-        "https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY",
-        headers=HEADERS,
-        timeout=10
-    )
+            # Refresh cookies
+            session.get(
+                "https://www.nseindia.com/option-chain",
+                headers=HEADERS,
+                timeout=10
+            )
 
-    response.raise_for_status()
+            time.sleep(0.5)
 
-    return response.json()
+            response = session.get(
+                "https://www.nseindia.com/api/option-chain-indices?symbol=NIFTY",
+                headers=HEADERS,
+                timeout=10
+            )
+
+            response.raise_for_status()
+
+            return response.json()
+
+        except requests.RequestException:
+
+            if attempt < 2:
+                time.sleep(2)
+                continue
+
+            raise

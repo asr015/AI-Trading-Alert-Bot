@@ -69,7 +69,7 @@ def run_watchlist():
                 "target2": analysis.get("target2", "N/A")
 
             })
-                    except Exception as e:
+        except Exception as e:
 
             print(f"{symbol}: {e}")
 

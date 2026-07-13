@@ -79,7 +79,7 @@ Put Writing : {option['PutWriting']}
         reasons = "\n".join(stock["reasons"][:4])
 
         ai_reasons = "\n".join(stock.get("ai_reasons", [])[:2])
-                message += f"""        
+        message += f"""
 {medal} {stock['symbol']}
 
 {trade}

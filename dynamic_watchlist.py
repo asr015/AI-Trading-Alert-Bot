@@ -1,11 +1,7 @@
-# ==========================================
-# TradingASR AI Pro v2.0
-# File : dynamic_watchlist.py
-# ==========================================
-
 import requests
 import pandas as pd
 from io import StringIO
+
 
 def get_watchlist():
 
@@ -25,36 +21,51 @@ def get_watchlist():
 
         response.raise_for_status()
 
-        df = pd.read_csv(StringIO(response.text))
+        # Skip invalid header lines
+        df = pd.read_csv(
+            StringIO(response.text),
+            skiprows=1,
+            on_bad_lines="skip"
+        )
 
         symbols = []
 
-        for symbol in df.iloc[:, 1]:
+        for col in df.columns:
 
-            symbol = str(symbol).strip()
+            if "symbol" in col.lower():
 
-            if (
-                symbol
-                and symbol != "SYMBOL"
-                and symbol.lower() != "nan"
-            ):
-                symbols.append(symbol + ".NS")
+                for symbol in df[col]:
 
-        return sorted(list(set(symbols)))
+                    symbol = str(symbol).strip()
+
+                    if (
+                        symbol
+                        and symbol.lower() != "nan"
+                        and symbol.upper() != "SYMBOL"
+                    ):
+                        symbols.append(symbol + ".NS")
+
+                break
+
+        symbols = sorted(list(set(symbols)))
+
+        if len(symbols) > 0:
+            return symbols
 
     except Exception as e:
 
         print("Dynamic Watchlist Error:", e)
 
-        return [
-            "RELIANCE.NS",
-            "HDFCBANK.NS",
-            "ICICIBANK.NS",
-            "SBIN.NS",
-            "TCS.NS",
-            "INFY.NS",
-            "HCLTECH.NS",
-            "LT.NS",
-            "BHARTIARTL.NS",
-            "TATAMOTORS.NS"
-        ]
+    # Fallback Watchlist
+    return [
+        "RELIANCE.NS",
+        "HDFCBANK.NS",
+        "ICICIBANK.NS",
+        "SBIN.NS",
+        "TCS.NS",
+        "INFY.NS",
+        "HCLTECH.NS",
+        "LT.NS",
+        "BHARTIARTL.NS",
+        "TATAMOTORS.NS"
+    ]

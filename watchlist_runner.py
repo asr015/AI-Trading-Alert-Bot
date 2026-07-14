@@ -1,5 +1,5 @@
 # ==========================================
-# TradingASR AI Pro v2.2
+# TradingASR AI Pro v2.3
 # File : watchlist_runner.py
 # ==========================================
 
@@ -56,9 +56,9 @@ def run_watchlist():
 
                 "ai_reasons": decision.get("reasons", []),
 
-                "verdict": decision.get("verdict", "Neutral"),
+                "verdict": decision.get("verdict", "WAIT"),
 
-                "confidence": decision.get("confidence", "Low"),
+                "confidence": decision.get("confidence", "0%"),
 
                 "entry": analysis.get("entry", "N/A"),
 
@@ -69,34 +69,41 @@ def run_watchlist():
                 "target2": analysis.get("target2", "N/A")
 
             })
+
         except Exception as e:
 
             print(f"{symbol}: {e}")
 
-    # ==========================
-    # Sort by Highest Score
-    # ==========================
+    # ==========================================
+    # Sort by Highest Absolute Score
+    # ==========================================
 
     results.sort(
         key=lambda x: abs(x["score"]),
         reverse=True
     )
 
-    # ==========================
-    # Filter High Probability
-    # ==========================
+    # ==========================================
+    # High Probability Filter
+    # ==========================================
 
     filtered = []
 
     for stock in results:
 
-        if abs(stock["score"]) >= 150:
-
+        if (
+            abs(stock["score"]) >= 180
+            and stock["verdict"] != "🟡 WAIT"
+            and stock["confidence"] in ["90%", "95%", "98%"]
+        ):
             filtered.append(stock)
 
-    if len(filtered) == 0:
+    # Maximum 5 Signals
+    filtered = filtered[:5]
 
-        filtered = results[:5]
+    # Fallback (agar koi strong trade na mile)
+    if len(filtered) == 0:
+        filtered = results[:3]
 
     print(f"High Probability Trades : {len(filtered)}")
 

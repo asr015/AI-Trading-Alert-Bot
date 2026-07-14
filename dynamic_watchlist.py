@@ -1,3 +1,8 @@
+# ==========================================
+# TradingASR AI Pro v2.2
+# File : dynamic_watchlist.py
+# ==========================================
+
 import requests
 import pandas as pd
 from io import StringIO
@@ -21,7 +26,6 @@ def get_watchlist():
 
         response.raise_for_status()
 
-        # Skip invalid header lines
         df = pd.read_csv(
             StringIO(response.text),
             skiprows=1,
@@ -30,33 +34,32 @@ def get_watchlist():
 
         symbols = []
 
-        for col in df.columns:
+        # Second column normally contains the symbol
+        if len(df.columns) > 1:
 
-            if "symbol" in col.lower():
+            for symbol in df.iloc[:, 1]:
 
-                for symbol in df[col]:
+                symbol = str(symbol).strip().upper()
 
-                    symbol = str(symbol).strip()
+                if (
+                    symbol
+                    and symbol != "SYMBOL"
+                    and symbol != "NAN"
+                ):
+                    symbols.append(symbol + ".NS")
 
-                    if (
-                        symbol
-                        and symbol.lower() != "nan"
-                        and symbol.upper() != "SYMBOL"
-                    ):
-                        symbols.append(symbol + ".NS")
+        symbols = sorted(set(symbols))
 
-                break
-
-        symbols = sorted(list(set(symbols)))
-
-        if len(symbols) > 0:
+        if symbols:
+            print(f"Loaded {len(symbols)} F&O Stocks")
             return symbols
 
     except Exception as e:
 
         print("Dynamic Watchlist Error:", e)
 
-    # Fallback Watchlist
+    print("Using fallback watchlist...")
+
     return [
         "RELIANCE.NS",
         "HDFCBANK.NS",

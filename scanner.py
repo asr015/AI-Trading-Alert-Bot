@@ -26,16 +26,23 @@ def get_stock_data(symbol):
             interval=TIMEFRAME,
             auto_adjust=True,
             progress=False,
-            threads=True
+            threads=False,
+            timeout=30
         )
 
         # ==========================================
         # FIX : yfinance MultiIndex Columns
         # ==========================================
+
         if isinstance(data.columns, pd.MultiIndex):
             data.columns = data.columns.get_level_values(0)
 
         if data is None or data.empty:
+            return pd.DataFrame()
+
+        data = data.dropna()
+
+        if data.empty:
             return pd.DataFrame()
 
         _cache[symbol] = data

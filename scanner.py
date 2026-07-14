@@ -1,8 +1,9 @@
 # ==========================================
-# TradingASR AI Pro v2.2
+# TradingASR AI Pro v2.3
 # File : scanner.py
 # ==========================================
 
+import time
 import pandas as pd
 import yfinance as yf
 
@@ -15,42 +16,47 @@ def get_stock_data(symbol):
 
     global _cache
 
-    try:
+    if symbol in _cache:
+        return _cache[symbol]
 
-        if symbol in _cache:
-            return _cache[symbol]
+    for attempt in range(2):
 
-        data = yf.download(
-            symbol,
-            period=PERIOD,
-            interval=TIMEFRAME,
-            auto_adjust=True,
-            progress=False,
-            threads=False,
-            timeout=30
-        )
+        try:
 
-        # ==========================================
-        # FIX : yfinance MultiIndex Columns
-        # ==========================================
+            data = yf.download(
+                symbol,
+                period=PERIOD,
+                interval=TIMEFRAME,
+                auto_adjust=True,
+                progress=False,
+                threads=False,
+                timeout=30
+            )
 
-        if isinstance(data.columns, pd.MultiIndex):
-            data.columns = data.columns.get_level_values(0)
+            if isinstance(data.columns, pd.MultiIndex):
+                data.columns = data.columns.get_level_values(0)
 
-        if data is None or data.empty:
-            return pd.DataFrame()
+            if data is None or data.empty:
+                raise Exception("No Data")
 
-        data = data.dropna()
+            data = data.dropna()
 
-        if data.empty:
-            return pd.DataFrame()
+            if data.empty:
+                raise Exception("Empty Data")
 
-        _cache[symbol] = data
+            _cache[symbol] = data
 
-        return data
+            # Prevent unlimited cache growth
+            if len(_cache) > 300:
+                _cache.clear()
 
-    except Exception as e:
+            return data
 
-        print(f"{symbol}: {e}")
+        except Exception as e:
 
-        return pd.DataFrame()
+            if attempt == 1:
+                print(f"{symbol}: {e}")
+
+            time.sleep(1)
+
+    return pd.DataFrame()

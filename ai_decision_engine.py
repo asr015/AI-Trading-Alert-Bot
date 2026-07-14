@@ -1,33 +1,9 @@
+# ==========================================
+# TradingASR AI Pro v2.2
+# File : ai_decision_engine.py
+# ==========================================
+
 def analyze_setup(score, reasons):
-
-    confidence = 40
-
-    if score >= 220:
-        confidence = 98
-
-    elif score >= 200:
-        confidence = 95
-
-    elif score >= 180:
-        confidence = 90
-
-    elif score >= 150:
-        confidence = 82
-
-    elif score >= 100:
-        confidence = 65
-
-    elif score <= -220:
-        confidence = 98
-
-    elif score <= -200:
-        confidence = 95
-
-    elif score <= -180:
-        confidence = 90
-
-    elif score <= -150:
-        confidence = 82
 
     bullish = [
         "Smart Money",
@@ -49,16 +25,40 @@ def analyze_setup(score, reasons):
     bull = sum(any(x in r for x in bullish) for r in reasons)
     bear = sum(any(x in r for x in bearish) for r in reasons)
 
-    if score >= 180:
-        verdict = "🔥 HIGH PROBABILITY BUY"
+    confidence = 60
 
-    elif score >= 150:
+    if abs(score) >= 280:
+        confidence = 98
+    elif abs(score) >= 250:
+        confidence = 96
+    elif abs(score) >= 220:
+        confidence = 94
+    elif abs(score) >= 190:
+        confidence = 91
+    elif abs(score) >= 160:
+        confidence = 87
+    elif abs(score) >= 130:
+        confidence = 82
+    elif abs(score) >= 100:
+        confidence = 75
+
+    # Extra confidence from multiple confirmations
+    if bull >= 4 and score > 0:
+        confidence = min(confidence + 2, 99)
+
+    if bear >= 4 and score < 0:
+        confidence = min(confidence + 2, 99)
+
+    if score >= 250:
+        verdict = "🚀 STRONG BUY"
+
+    elif score >= 180:
         verdict = "🟢 BUY"
 
-    elif score <= -180:
-        verdict = "🔥 HIGH PROBABILITY SELL"
+    elif score <= -250:
+        verdict = "💥 STRONG SELL"
 
-    elif score <= -150:
+    elif score <= -180:
         verdict = "🔴 SELL"
 
     else:

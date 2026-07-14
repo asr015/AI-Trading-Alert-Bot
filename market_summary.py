@@ -1,3 +1,8 @@
+# ==========================================
+# TradingASR AI Pro v2.2
+# File : market_summary.py
+# ==========================================
+
 def create_summary(results):
 
     total = len(results)
@@ -8,12 +13,12 @@ def create_summary(results):
 
     for stock in results:
 
-        score = stock["score"]
+        score = stock.get("score", 0)
 
-        if score >= 120:
+        if score >= 180:
             bullish += 1
 
-        elif score < 60:
+        elif score <= -180:
             bearish += 1
 
         else:

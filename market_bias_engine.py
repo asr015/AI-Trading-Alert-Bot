@@ -1,51 +1,61 @@
 # ==========================================
-# TradingASR AI Pro v2.0
+# TradingASR AI Pro v4.0
 # File : market_bias_engine.py
+# Part 1 / 3
 # ==========================================
 
-from config import BULLISH_BIAS, BEARISH_BIAS
-
-
-def get_market_bias(bullish, bearish):
-
-    total = bullish + bearish
-
-    if total == 0:
-        return {
-            "bias": "🟡 Sideways",
-            "strength": "0%"
-        }
-
-    bullish_pct = round((bullish / total) * 100)
-    bearish_pct = 100 - bullish_pct
-
-    if bullish_pct >= 60:
-        return {
-            "bias": "🟢 Bullish",
-            "strength": f"{bullish_pct}%"
-        }
-
-    elif bearish_pct >= 60:
-        return {
-            "bias": "🔴 Bearish",
-            "strength": f"{bearish_pct}%"
-        }
-
-    return {
-        "bias": "🟡 Sideways",
-        "strength": "50%"
-    }
+from option_chain import analyze_option_chain
+from market_breadth_engine import market_breadth
+from sector_strength_engine import sector_strength
+from index_engine import get_index_signal
 
 
 def market_bias_score():
 
-    """
-    Placeholder function for AI Master Engine.
+    score = 0
 
-    Future:
-    This function can calculate market bias using
-    NIFTY, BANKNIFTY, Advance/Decline,
-    Sector Strength, VIX, etc.
-    """
+    reasons = []
 
-    return 0, []
+    # ==========================================
+    # Option Chain
+    # ==========================================
+
+    option = analyze_option_chain()
+
+    pcr = option.get("PCR", "N/A")
+
+    bias = option.get("MarketBias", "UNKNOWN")
+
+    if isinstance(pcr, (int, float)):
+
+        if pcr >= 1.20:
+
+            score += 20
+
+            reasons.append(
+                f"🟢 PCR Bullish ({pcr})"
+            )
+
+        elif pcr <= 0.80:
+
+            score -= 20
+
+            reasons.append(
+                f"🔴 PCR Bearish ({pcr})"
+            )
+
+    if bias == "BULLISH":
+
+        score += 15
+
+        reasons.append(
+            "📈 Option Chain Bullish"
+        )
+
+    elif bias == "BEARISH":
+
+        score -= 15
+
+        reasons.append(
+            "📉 Option Chain Bearish"
+        )

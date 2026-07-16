@@ -296,3 +296,43 @@ def final_ai_score(symbol, scanner_score):
             )
 
     reasons = clean_reasons(reasons)
+        # ======================================
+    # FINAL AI RESULT
+    # ======================================
+
+    return {
+
+        "symbol": symbol,
+
+        "score": score,
+
+        "signal": signal,
+
+        "verdict": verdict,
+
+        "confidence": confidence,
+
+        "reasons": reasons,
+
+        # ==================================
+        # Market Context
+        # ==================================
+
+        "market_bias": market.get("market", "UNKNOWN")
+        if isinstance(market, dict)
+        else "UNKNOWN",
+
+        "market_score": market.get("score", 0)
+        if isinstance(market, dict)
+        else 0,
+
+        "option_chain": _option_cache,
+
+        # ==================================
+        # Future Ready
+        # ==================================
+
+        "news": news_reasons,
+
+        "version": "TradingASR AI Pro v4.0"
+    }

@@ -201,4 +201,89 @@ def analyze_index(name, symbol):
     else:
         signal = "🟡 WAIT"
         confidence = "60%"
+            # ==========================================
+    # REMOVE DUPLICATE REASONS
+    # ==========================================
+
+    reasons = list(dict.fromkeys(reasons))
+
+    # ==========================================
+    # FINAL RESULT
+    # ==========================================
+
+    return {
+
+        "index": name,
+
+        "signal": signal,
+
+        "score": score,
+
+        "confidence": confidence,
+
+        "entry": trade["entry"],
+
+        "sl": trade["sl"],
+
+        "target1": trade["target1"],
+
+        "target2": trade["target2"],
+
+        "reasons": reasons
+
+    }
+
+
+# ==========================================
+# RUN INDEX ENGINE
+# ==========================================
+
+def run_index_engine():
+
+    results = []
+
+    for name, symbol in INDEXES.items():
+
+        result = analyze_index(name, symbol)
+
+        results.append(result)
+
+    return results
+
+
+# ==========================================
+# TEST
+# ==========================================
+
+if __name__ == "__main__":
+
+    indexes = run_index_engine()
+
+    for item in indexes:
+
+        print("=" * 50)
+
+        print(item["index"])
+
+        print(item["signal"])
+
+        print(f"Score : {item['score']}")
+
+        print(f"Confidence : {item['confidence']}")
+
+        print(f"Entry : {item['entry']}")
+
+        print(f"SL : {item['sl']}")
+
+        print(f"T1 : {item['target1']}")
+
+        print(f"T2 : {item['target2']}")
+
+        print("Reasons:")
+
+        for reason in item["reasons"]:
+
+            print(reason)
+
+        print("=" * 50)
         

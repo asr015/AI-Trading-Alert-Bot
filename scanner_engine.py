@@ -288,3 +288,63 @@ def calculate_score(data):
     # ==========================================
 
     reasons = list(dict.fromkeys(reasons))
+        # ==========================================
+    # SCORE LIMIT
+    # ==========================================
+
+    if score > 500:
+        score = 500
+
+    elif score < -500:
+        score = -500
+
+    # ==========================================
+    # SETUP QUALITY
+    # ==========================================
+
+    if confirmations >= 10:
+
+        setup = "⭐⭐⭐⭐⭐ Institutional Setup"
+
+    elif confirmations >= 8:
+
+        setup = "⭐⭐⭐⭐ Strong Setup"
+
+    elif confirmations >= 6:
+
+        setup = "⭐⭐⭐ Good Setup"
+
+    elif confirmations >= 4:
+
+        setup = "⭐⭐ Average Setup"
+
+    else:
+
+        setup = "⭐ Weak Setup"
+
+    # ==========================================
+    # AI SAFETY FILTER
+    # ==========================================
+
+    if confirmations < 5:
+
+        score = 0
+
+        reasons.append(
+            "⚠️ Rejected : Low Confirmation Setup"
+        )
+
+    # ==========================================
+    # RISK ENGINE
+    # ==========================================
+
+    trade = calculate_trade(df, score)
+
+    # ==========================================
+    # REMOVE DUPLICATES
+    # ==========================================
+
+    reasons = list(dict.fromkeys(reasons))
+
+    # Maximum important reasons only
+    reasons = reasons[:15]

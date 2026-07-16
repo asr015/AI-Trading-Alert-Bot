@@ -176,3 +176,90 @@ def market_breadth():
     volume_percent = round((volume / total) * 100, 1)
 
     score = 0
+        # ==========================================
+    # AI MARKET BREADTH SCORE
+    # ==========================================
+
+    if bull_percent >= 70:
+        score += 30
+        reasons.append("🟢 Strong Bullish Breadth")
+
+    elif bull_percent >= 60:
+        score += 20
+        reasons.append("🟢 Bullish Breadth")
+
+    elif bull_percent <= 30:
+        score -= 30
+        reasons.append("🔴 Strong Bearish Breadth")
+
+    elif bull_percent <= 40:
+        score -= 20
+        reasons.append("🔴 Bearish Breadth")
+
+    # EMA20
+    if ema20_percent >= 70:
+        score += 15
+        reasons.append(f"✅ {ema20}/{total} Above EMA20")
+
+    elif ema20_percent <= 30:
+        score -= 15
+        reasons.append(f"🔴 Only {ema20}/{total} Above EMA20")
+
+    # EMA50
+    if ema50_percent >= 70:
+        score += 15
+        reasons.append(f"✅ {ema50}/{total} Above EMA50")
+
+    elif ema50_percent <= 30:
+        score -= 15
+        reasons.append(f"🔴 Only {ema50}/{total} Above EMA50")
+
+    # EMA200
+    if ema200_percent >= 70:
+        score += 20
+        reasons.append(f"✅ {ema200}/{total} Above EMA200")
+
+    elif ema200_percent <= 30:
+        score -= 20
+        reasons.append(f"🔴 Only {ema200}/{total} Above EMA200")
+
+    # RSI
+    if rsi_percent >= 60:
+        score += 10
+        reasons.append("📈 Strong Market Momentum")
+
+    elif rsi_percent <= 40:
+        score -= 10
+        reasons.append("📉 Weak Market Momentum")
+
+    # Volume
+    if volume_percent >= 50:
+        score += 10
+        reasons.append("💰 Broad Market Volume Expansion")
+
+    # Score Limit
+    score = max(min(score, 100), -100)
+
+    return {
+
+        "score": score,
+
+        "bullish": bullish,
+
+        "bearish": bearish,
+
+        "breadth": bull_percent,
+
+        "ema20": ema20_percent,
+
+        "ema50": ema50_percent,
+
+        "ema200": ema200_percent,
+
+        "rsi": rsi_percent,
+
+        "volume": volume_percent,
+
+        "reasons": reasons
+
+    }

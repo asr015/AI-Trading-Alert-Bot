@@ -56,3 +56,88 @@ def calculate_score(data):
     reasons = []
 
     confirmations = 0
+        # ==========================================
+    # EMA ALIGNMENT
+    # ==========================================
+
+    if last["EMA20"] > last["EMA50"]:
+
+        score += EMA_BULLISH
+        confirmations += 1
+        reasons.append("✅ EMA20 > EMA50")
+
+    else:
+
+        score += EMA_BEARISH
+        reasons.append("🔴 EMA20 < EMA50")
+
+    if last["EMA50"] > last["EMA200"]:
+
+        score += EMA200_BULLISH
+        confirmations += 1
+        reasons.append("✅ Above EMA200")
+
+    else:
+
+        score += EMA200_BEARISH
+        reasons.append("🔴 Below EMA200")
+
+    # ==========================================
+    # EMA SLOPE
+    # ==========================================
+
+    if last["EMA20"] > prev["EMA20"]:
+
+        score += EMA_RISING
+        confirmations += 1
+        reasons.append("📈 EMA Rising")
+
+    else:
+
+        score += EMA_FALLING
+        reasons.append("📉 EMA Falling")
+
+    # ==========================================
+    # RSI
+    # ==========================================
+
+    if last["RSI"] >= 60:
+
+        score += RSI_BULLISH
+        confirmations += 1
+        reasons.append("💪 Strong RSI")
+
+    elif last["RSI"] <= 40:
+
+        score += RSI_BEARISH
+        reasons.append("⚠️ Weak RSI")
+
+    # ==========================================
+    # MACD
+    # ==========================================
+
+    if last["MACD"] > last["Signal"]:
+
+        score += MACD_BULLISH
+        confirmations += 1
+        reasons.append("✅ MACD Bullish")
+
+    else:
+
+        score += MACD_BEARISH
+        reasons.append("🔴 MACD Bearish")
+
+    # ==========================================
+    # VWAP
+    # ==========================================
+
+    if last["Close"] > last["VWAP"]:
+
+        score += VWAP_BULLISH
+        confirmations += 1
+        reasons.append("📊 Above VWAP")
+
+    else:
+
+        score += VWAP_BEARISH
+        reasons.append("📉 Below VWAP")

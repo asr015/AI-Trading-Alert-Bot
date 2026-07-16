@@ -105,3 +105,74 @@ def market_breadth():
         last = df.iloc[-1]
 
         total += 1
+                # ==========================================
+        # EMA BREADTH
+        # ==========================================
+
+        if last["Close"] > last["EMA20"]:
+            ema20 += 1
+
+        if last["Close"] > last["EMA50"]:
+            ema50 += 1
+
+        if last["Close"] > last["EMA200"]:
+            ema200 += 1
+
+        # ==========================================
+        # RSI BREADTH
+        # ==========================================
+
+        if last["RSI"] >= 60:
+            rsi += 1
+
+        # ==========================================
+        # VOLUME BREADTH
+        # ==========================================
+
+        if last["RVOL"] >= 1.20:
+            volume += 1
+
+        # ==========================================
+        # ADVANCE / DECLINE
+        # ==========================================
+
+        if last["Close"] > last["Open"]:
+            bullish += 1
+        else:
+            bearish += 1
+
+    # ==========================================
+    # NO DATA
+    # ==========================================
+
+    if total == 0:
+
+        return {
+            "score": 0,
+            "bullish": 0,
+            "bearish": 0,
+            "breadth": 0,
+            "reasons": [
+                "No market data"
+            ]
+        }
+
+    # ==========================================
+    # PERCENTAGES
+    # ==========================================
+
+    bull_percent = round((bullish / total) * 100, 1)
+
+    bear_percent = round((bearish / total) * 100, 1)
+
+    ema20_percent = round((ema20 / total) * 100, 1)
+
+    ema50_percent = round((ema50 / total) * 100, 1)
+
+    ema200_percent = round((ema200 / total) * 100, 1)
+
+    rsi_percent = round((rsi / total) * 100, 1)
+
+    volume_percent = round((volume / total) * 100, 1)
+
+    score = 0

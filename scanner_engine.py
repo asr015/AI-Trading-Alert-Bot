@@ -218,3 +218,73 @@ def calculate_score(data):
         confirmations += 1
 
     reasons.extend(sm_reasons)
+        # ==========================================
+    # LIQUIDITY ENGINE
+    # ==========================================
+
+    liq_score, liq_reasons = liquidity_score(df)
+
+    score += liq_score
+
+    if liq_score > 0:
+        confirmations += 1
+
+    reasons.extend(liq_reasons)
+
+    # ==========================================
+    # STRUCTURE ENGINE
+    # ==========================================
+
+    structure_points, structure_reasons = structure_score(df)
+
+    score += structure_points
+
+    if abs(structure_points) >= 30:
+        confirmations += 1
+
+    reasons.extend(structure_reasons)
+
+    # ==========================================
+    # ORDER BLOCK ENGINE
+    # ==========================================
+
+    ob_points, ob_reasons = order_block_score(df)
+
+    score += ob_points
+
+    if abs(ob_points) >= 30:
+        confirmations += 1
+
+    reasons.extend(ob_reasons)
+
+    # ==========================================
+    # FAIR VALUE GAP ENGINE
+    # ==========================================
+
+    fvg_points, fvg_reasons = fvg_score(df)
+
+    score += fvg_points
+
+    if abs(fvg_points) >= 30:
+        confirmations += 1
+
+    reasons.extend(fvg_reasons)
+
+    # ==========================================
+    # NEWS ENGINE
+    # ==========================================
+
+    news_points, news_reasons = news_score("")
+
+    score += news_points
+
+    if news_points > 0:
+        confirmations += 1
+
+    reasons.extend(news_reasons)
+
+    # ==========================================
+    # REMOVE DUPLICATE REASONS
+    # ==========================================
+
+    reasons = list(dict.fromkeys(reasons))

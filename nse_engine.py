@@ -1,10 +1,10 @@
 # ==========================================
-# TradingASR AI Pro v2.1
+# TradingASR AI Pro v3.0
 # File : nse_engine.py
 # ==========================================
 
-import requests
 import time
+import requests
 
 BASE_URL = "https://www.nseindia.com"
 
@@ -22,6 +22,7 @@ HEADERS = {
     "Accept": "application/json,text/plain,*/*",
     "Accept-Language": "en-US,en;q=0.9",
     "Referer": "https://www.nseindia.com/option-chain",
+    "Origin": "https://www.nseindia.com",
     "Connection": "keep-alive"
 }
 
@@ -29,45 +30,62 @@ session = requests.Session()
 session.headers.update(HEADERS)
 
 
+def refresh_session():
+
+    session.cookies.clear()
+
+    response = session.get(
+        BASE_URL,
+        timeout=20
+    )
+
+    response.raise_for_status()
+
+    time.sleep(1)
+
+
 def get_option_chain():
 
     last_error = None
 
-    for attempt in range(3):
+    for attempt in range(5):
 
         try:
 
-            # Refresh cookies
-            session.get(
-                BASE_URL,
-                timeout=15
-            )
-
-            time.sleep(1)
+            refresh_session()
 
             response = session.get(
                 OPTION_CHAIN_URL,
                 timeout=20
             )
 
-            response.raise_for_status()
+            if response.status_code != 200:
+                raise Exception(
+                    f"HTTP {response.status_code}"
+                )
 
             data = response.json()
 
             if (
-                "records" in data
-                and "data" in data["records"]
+                "records" not in data
+                or "data" not in data["records"]
             ):
-                return data
+                raise Exception(
+                    "Invalid NSE Response"
+                )
 
-            raise Exception("Invalid NSE response")
+            return data
 
         except Exception as e:
 
-            last_error = e
+            last_error = str(e)
+
+            print(
+                f"NSE Retry {attempt+1}/5 : {last_error}"
+            )
 
             time.sleep(2)
 
     raise Exception(
-        f"NSE Option Chain Error : {last_error}"
-    )
+        f"NSE Option Chain Failed : {last_error}"
+)

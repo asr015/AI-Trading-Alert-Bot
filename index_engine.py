@@ -95,3 +95,110 @@ def analyze_index(name, symbol):
 
     score = 0
     reasons = []
+        # ==========================================
+    # EMA
+    # ==========================================
+
+    if last["EMA20"] > last["EMA50"]:
+        score += 30
+        reasons.append("✅ EMA20 > EMA50")
+    else:
+        score -= 30
+        reasons.append("🔴 EMA20 < EMA50")
+
+    if last["EMA50"] > last["EMA200"]:
+        score += 30
+        reasons.append("✅ Above EMA200")
+    else:
+        score -= 30
+        reasons.append("🔴 Below EMA200")
+
+    # ==========================================
+    # RSI
+    # ==========================================
+
+    if last["RSI"] >= 60:
+        score += 25
+        reasons.append("✅ Strong RSI")
+
+    elif last["RSI"] <= 40:
+        score -= 25
+        reasons.append("🔴 Weak RSI")
+
+    # ==========================================
+    # MACD
+    # ==========================================
+
+    if last["MACD"] > last["Signal"]:
+        score += 25
+        reasons.append("✅ MACD Bullish")
+    else:
+        score -= 25
+        reasons.append("🔴 MACD Bearish")
+
+    # ==========================================
+    # VWAP
+    # ==========================================
+
+    if last["Close"] > last["VWAP"]:
+        score += 20
+        reasons.append("✅ Above VWAP")
+    else:
+        score -= 20
+        reasons.append("🔴 Below VWAP")
+
+    # ==========================================
+    # Relative Volume
+    # ==========================================
+
+    if last["RVOL"] >= 1.5:
+        score += 20
+        reasons.append("✅ High Relative Volume")
+
+    # ==========================================
+    # Trend Strength
+    # ==========================================
+
+    if last["EMA20"] > prev["EMA20"]:
+        score += 20
+        reasons.append("📈 Rising Trend")
+    else:
+        score -= 20
+        reasons.append("📉 Falling Trend")
+
+    # ==========================================
+    # ATR Based Trade
+    # ==========================================
+
+    trade = calculate_trade(df, score)
+
+    # ==========================================
+    # SCORE LIMIT
+    # ==========================================
+
+    score = max(min(score, 300), -300)
+
+    # ==========================================
+    # CONFIDENCE
+    # ==========================================
+
+    if score >= 220:
+        signal = "🔥 HIGH PROBABILITY BUY"
+        confidence = "95%"
+
+    elif score >= 150:
+        signal = "🟢 BUY"
+        confidence = "85%"
+
+    elif score <= -220:
+        signal = "🔥 HIGH PROBABILITY SELL"
+        confidence = "95%"
+
+    elif score <= -150:
+        signal = "🔴 SELL"
+        confidence = "85%"
+
+    else:
+        signal = "🟡 WAIT"
+        confidence = "60%"
+        

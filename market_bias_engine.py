@@ -59,3 +59,68 @@ def market_bias_score():
         reasons.append(
             "📉 Option Chain Bearish"
         )
+            # ==========================================
+    # Market Breadth
+    # ==========================================
+
+    breadth = market_breadth()
+
+    breadth_score = breadth.get("score", 0)
+
+    score += breadth_score
+
+    reasons.extend(
+        breadth.get("reasons", [])
+    )
+
+    # ==========================================
+    # Sector Strength
+    # ==========================================
+
+    sectors = sector_strength()
+
+    sector_score = sectors.get("score", 0)
+
+    score += sector_score
+
+    reasons.extend(
+        sectors.get("reasons", [])
+    )
+
+    # ==========================================
+    # Index Trend
+    # ==========================================
+
+    index = get_index_signal()
+
+    verdict = index.get(
+        "signal",
+        "WAIT"
+    )
+
+    confidence = index.get(
+        "confidence",
+        "0%"
+    )
+
+    if "BUY" in verdict:
+
+        score += 35
+
+        reasons.append(
+            f"📈 Index Bullish ({confidence})"
+        )
+
+    elif "SELL" in verdict:
+
+        score -= 35
+
+        reasons.append(
+            f"📉 Index Bearish ({confidence})"
+        )
+
+    else:
+
+        reasons.append(
+            "⚪ Index Neutral"
+        )

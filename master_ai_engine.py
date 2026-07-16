@@ -130,3 +130,91 @@ def clean_reasons(reasons):
             cleaned.append(reason)
 
     return cleaned[:12]
+    # ==========================================
+# FINAL AI ENGINE
+# ==========================================
+
+def final_ai_score(symbol, scanner_score):
+
+    global _option_cache
+
+    score = scanner_score
+
+    reasons = []
+
+    # ======================================
+    # MARKET BIAS ENGINE
+    # ======================================
+
+    market = market_bias_score()
+
+    if isinstance(market, dict):
+
+        score += market.get("score", 0)
+
+        reasons.extend(
+            market.get("reasons", [])
+        )
+
+    # ======================================
+    # OPTION CHAIN CONFIRMATION
+    # ======================================
+
+    if _option_cache:
+
+        pcr = _option_cache.get("PCR", "N/A")
+
+        bias = _option_cache.get(
+            "MarketBias",
+            "UNKNOWN"
+        )
+
+        if isinstance(pcr, (int, float)):
+
+            if pcr >= 1.20:
+
+                score += 25
+
+                reasons.append(
+                    f"🟢 Bullish PCR ({pcr:.2f})"
+                )
+
+            elif pcr <= 0.80:
+
+                score -= 25
+
+                reasons.append(
+                    f"🔴 Bearish PCR ({pcr:.2f})"
+                )
+
+        if bias == "BULLISH":
+
+            score += 15
+
+            reasons.append(
+                "📈 Option Chain Bullish"
+            )
+
+        elif bias == "BEARISH":
+
+            score -= 15
+
+            reasons.append(
+                "📉 Option Chain Bearish"
+            )
+
+    # ======================================
+    # NEWS ENGINE (Future Ready)
+    # ======================================
+
+    news_points, news_reasons = news_score(symbol)
+
+    score += news_points
+
+    reasons.extend(news_reasons)
+
+    # ======================================
+    # SCORE NORMALIZATION
+    # ======================================
+
+    score = normalize_score(score)

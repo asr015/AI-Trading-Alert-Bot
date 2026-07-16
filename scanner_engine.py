@@ -141,3 +141,80 @@ def calculate_score(data):
 
         score += VWAP_BEARISH
         reasons.append("📉 Below VWAP")
+            # ==========================================
+    # ATR FILTER
+    # ==========================================
+
+    atr_percent = (last["ATR"] / last["Close"]) * 100
+
+    if 1 <= atr_percent <= 5:
+
+        score += 15
+        confirmations += 1
+        reasons.append("📏 Healthy ATR")
+
+    elif atr_percent > 5:
+
+        score -= 10
+        reasons.append("⚠️ High Volatility")
+
+    # ==========================================
+    # RELATIVE VOLUME
+    # ==========================================
+
+    if last["RVOL"] >= 1.50:
+
+        score += RVOL_BULLISH
+        confirmations += 1
+        reasons.append("📈 High Relative Volume")
+
+    elif last["RVOL"] >= 1.20:
+
+        score += 15
+        confirmations += 1
+        reasons.append("📊 Good Relative Volume")
+
+    # ==========================================
+    # VOLUME EXPANSION
+    # ==========================================
+
+    if last["Volume"] > prev["Volume"]:
+
+        score += VOLUME_BULLISH
+        confirmations += 1
+        reasons.append("💰 Volume Expansion")
+
+    # ==========================================
+    # MOMENTUM BEFORE MOMENTUM
+    # ==========================================
+
+    if (
+
+        last["EMA20"] > last["EMA50"]
+
+        and last["RSI"] > 55
+
+        and last["RVOL"] > 1.50
+
+        and last["MACD"] > last["Signal"]
+
+        and last["Close"] > last["VWAP"]
+
+    ):
+
+        score += MOMENTUM
+        confirmations += 2
+        reasons.append("🚀 Momentum Before Momentum")
+
+    # ==========================================
+    # SMART MONEY ENGINE
+    # ==========================================
+
+    sm_score, sm_reasons = smart_money_score(df)
+
+    score += sm_score
+
+    if sm_score > 0:
+        confirmations += 1
+
+    reasons.extend(sm_reasons)

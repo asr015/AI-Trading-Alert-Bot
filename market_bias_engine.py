@@ -124,3 +124,67 @@ def market_bias_score():
         reasons.append(
             "⚪ Index Neutral"
         )
+            # ==========================================
+    # SCORE LIMIT
+    # ==========================================
+
+    if score > 100:
+        score = 100
+
+    elif score < -100:
+        score = -100
+
+    # ==========================================
+    # FINAL MARKET BIAS
+    # ==========================================
+
+    if score >= 70:
+
+        market = "🟢 STRONG BULLISH"
+
+    elif score >= 35:
+
+        market = "🟢 BULLISH"
+
+    elif score <= -70:
+
+        market = "🔴 STRONG BEARISH"
+
+    elif score <= -35:
+
+        market = "🔴 BEARISH"
+
+    else:
+
+        market = "🟡 SIDEWAYS"
+
+    # ==========================================
+    # REMOVE DUPLICATE REASONS
+    # ==========================================
+
+    reasons = list(dict.fromkeys(reasons))
+
+    # Keep only most important reasons
+    reasons = reasons[:10]
+
+    # ==========================================
+    # FINAL RESULT
+    # ==========================================
+
+    return {
+
+        "score": score,
+
+        "market": market,
+
+        "reasons": reasons,
+
+        "option_chain": option,
+
+        "breadth": breadth,
+
+        "sector_strength": sectors,
+
+        "index": index
+
+        }

@@ -45,3 +45,88 @@ def calculate_confidence(score, reasons):
     confidence = max(50, min(99, int(confidence)))
 
     return f"{confidence}%"
+    # ==========================================
+# SCORE NORMALIZATION
+# ==========================================
+
+def normalize_score(score):
+
+    if score > 500:
+        return 500
+
+    elif score < -500:
+        return -500
+
+    return int(score)
+
+
+# ==========================================
+# AI VERDICT ENGINE
+# ==========================================
+
+def generate_verdict(score):
+
+    if score >= 420:
+
+        return {
+            "verdict": "🔥 ELITE BUY",
+            "signal": "BUY"
+        }
+
+    elif score >= 300:
+
+        return {
+            "verdict": "🚀 STRONG BUY",
+            "signal": "BUY"
+        }
+
+    elif score >= 180:
+
+        return {
+            "verdict": "🟢 BUY",
+            "signal": "BUY"
+        }
+
+    elif score <= -420:
+
+        return {
+            "verdict": "💥 ELITE SELL",
+            "signal": "SELL"
+        }
+
+    elif score <= -300:
+
+        return {
+            "verdict": "🔴 STRONG SELL",
+            "signal": "SELL"
+        }
+
+    elif score <= -180:
+
+        return {
+            "verdict": "🟥 SELL",
+            "signal": "SELL"
+        }
+
+    else:
+
+        return {
+            "verdict": "🟡 WAIT",
+            "signal": "WAIT"
+        }
+
+
+# ==========================================
+# REMOVE DUPLICATE REASONS
+# ==========================================
+
+def clean_reasons(reasons):
+
+    cleaned = []
+
+    for reason in reasons:
+
+        if reason not in cleaned:
+            cleaned.append(reason)
+
+    return cleaned[:12]

@@ -144,3 +144,130 @@ def sector_strength():
             "bullish": bullish,
             "total": total
             }
+            # ==========================================
+    # NO DATA
+    # ==========================================
+
+    if not sector_scores:
+
+        return {
+
+            "score": 0,
+
+            "strongest": "N/A",
+
+            "weakest": "N/A",
+
+            "sectors": {},
+
+            "reasons": [
+
+                "No sector data"
+
+            ]
+
+        }
+
+    # ==========================================
+    # STRONGEST & WEAKEST SECTOR
+    # ==========================================
+
+    strongest = max(
+
+        sector_scores,
+
+        key=lambda x: sector_scores[x]["score"]
+
+    )
+
+    weakest = min(
+
+        sector_scores,
+
+        key=lambda x: sector_scores[x]["score"]
+
+    )
+
+    overall = sum(
+
+        s["score"]
+
+        for s in sector_scores.values()
+
+    ) / len(sector_scores)
+
+    overall = round(overall)
+
+    # ==========================================
+    # AI SCORE
+    # ==========================================
+
+    ai_score = 0
+
+    if overall >= 70:
+
+        ai_score = 30
+
+        reasons.append(
+
+            "🟢 Broad Sector Strength"
+
+        )
+
+    elif overall >= 55:
+
+        ai_score = 20
+
+        reasons.append(
+
+            "🟢 Positive Sector Rotation"
+
+        )
+
+    elif overall <= 30:
+
+        ai_score = -30
+
+        reasons.append(
+
+            "🔴 Broad Sector Weakness"
+
+        )
+
+    elif overall <= 45:
+
+        ai_score = -20
+
+        reasons.append(
+
+            "🔴 Weak Sector Participation"
+
+        )
+
+    reasons.append(
+
+        f"🏆 Strongest Sector : {strongest}"
+
+    )
+
+    reasons.append(
+
+        f"⚠️ Weakest Sector : {weakest}"
+
+    )
+
+    return {
+
+        "score": ai_score,
+
+        "overall": overall,
+
+        "strongest": strongest,
+
+        "weakest": weakest,
+
+        "sectors": sector_scores,
+
+        "reasons": reasons
+
+    }

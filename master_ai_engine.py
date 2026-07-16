@@ -218,3 +218,81 @@ def final_ai_score(symbol, scanner_score):
     # ======================================
 
     score = normalize_score(score)
+        # ======================================
+    # CONFIDENCE ENGINE
+    # ======================================
+
+    reasons = clean_reasons(reasons)
+
+    confidence = calculate_confidence(
+        score,
+        reasons
+    )
+
+    # ======================================
+    # AI VERDICT
+    # ======================================
+
+    decision = generate_verdict(score)
+
+    verdict = decision["verdict"]
+
+    signal = decision["signal"]
+
+    # ======================================
+    # RISK FILTER
+    # ======================================
+
+    if signal == "BUY":
+
+        bearish = sum(
+            1 for r in reasons
+            if any(
+                x in r.lower()
+                for x in [
+                    "bearish",
+                    "selling",
+                    "breakdown",
+                    "lower",
+                    "supply"
+                ]
+            )
+        )
+
+        if bearish >= 4:
+
+            verdict = "🟡 WAIT"
+
+            signal = "WAIT"
+
+            reasons.append(
+                "⚠️ Bullish setup rejected by AI Risk Filter"
+            )
+
+    elif signal == "SELL":
+
+        bullish = sum(
+            1 for r in reasons
+            if any(
+                x in r.lower()
+                for x in [
+                    "bullish",
+                    "buying",
+                    "breakout",
+                    "higher",
+                    "demand"
+                ]
+            )
+        )
+
+        if bullish >= 4:
+
+            verdict = "🟡 WAIT"
+
+            signal = "WAIT"
+
+            reasons.append(
+                "⚠️ Bearish setup rejected by AI Risk Filter"
+            )
+
+    reasons = clean_reasons(reasons)

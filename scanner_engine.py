@@ -348,3 +348,41 @@ def calculate_score(data):
 
     # Maximum important reasons only
     reasons = reasons[:15]
+        # ==========================================
+    # FINAL RESULT
+    # ==========================================
+
+    return {
+
+        "score": score,
+
+        "setup": setup,
+
+        "confirmations": confirmations,
+
+        "reasons": reasons,
+
+        "entry": trade.get("entry", 0),
+
+        "sl": trade.get("sl", 0),
+
+        "target1": trade.get("target1", 0),
+
+        "target2": trade.get("target2", 0),
+
+        # Future Ready
+        "technical_score": score,
+
+        "smart_money": sm_score,
+
+        "liquidity": liq_score,
+
+        "structure": structure_points,
+
+        "order_block": ob_points,
+
+        "fvg": fvg_points,
+
+        "news": news_points
+
+    }

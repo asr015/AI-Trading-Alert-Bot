@@ -210,3 +210,79 @@ def build_message(summary, option_chain, index_data, trades):
                 msg += f"• {reason}\n"
 
             msg += "\n"
+                # ======================================
+    # FOOTER
+    # ======================================
+
+    msg += (
+        "<b>━━━━━━━━━━━━━━━━━━━━</b>\n"
+    )
+
+    msg += (
+        "<b>TradingASR AI Pro v4.0</b>\n"
+    )
+
+    msg += (
+        "Institutional AI Trading Assistant\n"
+    )
+
+    msg += (
+        "⚠️ Educational Purpose Only\n"
+    )
+
+    # ======================================
+    # TELEGRAM MESSAGE LIMIT
+    # ======================================
+
+    if len(msg) <= 4000:
+
+        return [msg]
+
+    messages = []
+
+    current = ""
+
+    for line in msg.split("\n"):
+
+        if len(current) + len(line) + 1 > 4000:
+
+            messages.append(current)
+
+            current = ""
+
+        current += line + "\n"
+
+    if current:
+
+        messages.append(current)
+
+    return messages
+
+
+# ==========================================
+# SEND REPORT
+# ==========================================
+
+def send_report(summary, option_chain, index_data, trades):
+
+    messages = build_message(
+
+        summary,
+
+        option_chain,
+
+        index_data,
+
+        trades
+
+    )
+
+    success = True
+
+    for message in messages:
+
+        if not send_message(message):
+
+            success = False
+
+    return success

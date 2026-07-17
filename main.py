@@ -1,29 +1,23 @@
 # ==========================================
 # TradingASR AI Pro v4.0
 # File : main.py
-# Part 1 / 3
 # ==========================================
 
 from watchlist_runner import run_watchlist
-
 import traceback
-
 import time
+import sys
 
-
-# ==========================================
-# MAIN
-# ==========================================
 
 def main():
 
     print("=" * 60)
-
     print("🚀 TradingASR AI Pro v4.0")
-
     print("=" * 60)
 
     start = time.time()
+
+    result = None
 
     try:
 
@@ -31,108 +25,44 @@ def main():
 
         print("\n✅ Scan Completed Successfully")
 
-        return result
-
     except Exception:
 
         print("\n❌ Fatal Error\n")
 
         traceback.print_exc()
 
-        return None
-            finally:
+    finally:
 
         end = time.time()
 
-        execution_time = round(
-
-            end - start,
-
-            2
-
-        )
+        execution_time = round(end - start, 2)
 
         print("\n" + "=" * 60)
-
         print("📊 EXECUTION SUMMARY")
-
         print("=" * 60)
 
-        print(
-
-            f"⏱ Execution Time : "
-
-            f"{execution_time} sec"
-
-        )
+        print(f"⏱ Execution Time : {execution_time} sec")
 
         if result:
 
-            summary = result.get(
+            summary = result.get("summary", {})
 
-                "summary",
-
-                {}
-
-            )
-
-            print(
-
-                f"📈 Stocks Scanned : "
-
-                f"{summary.get('scanned',0)}"
-
-            )
-
-            print(
-
-                f"🟢 Bullish : "
-
-                f"{summary.get('bullish',0)}"
-
-            )
-
-            print(
-
-                f"🔴 Bearish : "
-
-                f"{summary.get('bearish',0)}"
-
-            )
-
-            print(
-
-                f"🟡 Neutral : "
-
-                f"{summary.get('neutral',0)}"
-
-            )
-
-            print(
-
-                f"🏆 High Probability Trades : "
-
-                f"{len(result.get('trades',[]))}"
-
-            )
+            print(f"📈 Stocks Scanned : {summary.get('scanned', 0)}")
+            print(f"🟢 Bullish : {summary.get('bullish', 0)}")
+            print(f"🔴 Bearish : {summary.get('bearish', 0)}")
+            print(f"🟡 Neutral : {summary.get('neutral', 0)}")
+            print(f"🏆 High Probability Trades : {len(result.get('trades', []))}")
 
         print("=" * 60)
-    # ==========================================
-# ENTRY POINT
-# ==========================================
+
+    return result
+
 
 if __name__ == "__main__":
-
-    print("\nStarting TradingASR AI Pro...\n")
 
     result = main()
 
     if result is None:
+        sys.exit(1)
 
-        print("\n❌ TradingASR AI Failed")
-
-        raise SystemExit(1)
-
-    print("\n✅ TradingASR AI Finished Successfully")
-
-    raise SystemExit(0)
+    sys.exit(0)

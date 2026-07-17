@@ -139,3 +139,74 @@ def build_message(summary, option_chain, index_data, trades):
         f"Max Pain : "
         f"{option_chain.get('MaxPain','N/A')}\n\n"
     )
+        # ======================================
+    # HIGH PROBABILITY TRADES
+    # ======================================
+
+    msg += "<b>🏆 TOP HIGH PROBABILITY TRADES</b>\n\n"
+
+    if not trades:
+
+        msg += "❌ No High Probability Trade Found\n"
+
+    else:
+
+        # Best trades first
+        trades = sorted(
+
+            trades,
+
+            key=lambda x: abs(x.get("score", 0)),
+
+            reverse=True
+
+        )[:5]
+
+        for trade in trades:
+
+            msg += (
+                f"<b>{trade.get('symbol','')}</b>\n"
+            )
+
+            msg += (
+                f"{trade.get('verdict','WAIT')}\n"
+            )
+
+            msg += (
+                f"⭐ {trade.get('setup','N/A')}\n"
+            )
+
+            msg += (
+                f"AI Score : {trade.get('score',0)}\n"
+            )
+
+            msg += (
+                f"Confidence : "
+                f"{trade.get('confidence','0%')}\n\n"
+            )
+
+            msg += (
+                f"Entry : {trade.get('entry','N/A')}\n"
+            )
+
+            msg += (
+                f"SL : {trade.get('sl','N/A')}\n"
+            )
+
+            msg += (
+                f"T1 : {trade.get('target1','N/A')}\n"
+            )
+
+            msg += (
+                f"T2 : {trade.get('target2','N/A')}\n\n"
+            )
+
+            msg += "<b>Reasons</b>\n"
+
+            reasons = trade.get("reasons", [])
+
+            for reason in reasons[:8]:
+
+                msg += f"• {reason}\n"
+
+            msg += "\n"

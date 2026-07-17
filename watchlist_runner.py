@@ -286,3 +286,71 @@ def run_watchlist():
         reverse=True
 
     )[:5]
+    # ==========================================
+    # TELEGRAM REPORT
+    # ==========================================
+
+    print("\nPreparing Telegram Report...")
+
+    try:
+
+        send_ai_report(
+
+            summary=summary,
+
+            option_chain=option_chain,
+
+            index_data=index_data,
+
+            trades=final_trades
+
+        )
+
+        print("✅ Telegram Report Sent")
+
+    except Exception as e:
+
+        print(f"Telegram Error : {e}")
+
+    # ==========================================
+    # FINAL RESULT
+    # ==========================================
+
+    return {
+
+        "summary": summary,
+
+        "option_chain": option_chain,
+
+        "index_data": index_data,
+
+        "trades": final_trades
+
+    }
+
+
+# ==========================================
+# STANDALONE EXECUTION
+# ==========================================
+
+if __name__ == "__main__":
+
+    print("=" * 50)
+    print("TradingASR AI Pro v4.0")
+    print("=" * 50)
+
+    result = run_watchlist()
+
+    print("\n========== SCAN COMPLETE ==========")
+
+    print(
+        f"Stocks Scanned : "
+        f"{result['summary'].get('scanned', 0)}"
+    )
+
+    print(
+        f"High Probability Trades : "
+        f"{len(result['trades'])}"
+    )
+
+    print("===================================")

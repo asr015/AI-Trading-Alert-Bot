@@ -250,7 +250,47 @@ def run_index_engine():
 
     return results
 
+    # ==========================================
+# GET INDEX SIGNAL
+# ==========================================
 
+def get_index_signal():
+
+    results = run_index_engine()
+
+    for item in results:
+
+        if item["index"] == "NIFTY":
+            return item
+
+    return {
+        "index": "NIFTY",
+        "signal": "🟡 WAIT",
+        "score": 0,
+        "confidence": "0%",
+        "entry": "N/A",
+        "sl": "N/A",
+        "target1": "N/A",
+        "target2": "N/A",
+        "reasons": []
+    }
+
+
+# ==========================================
+# ANALYZE ALL INDICES
+# ==========================================
+
+def analyze_indices():
+
+    results = run_index_engine()
+
+    data = {}
+
+    for item in results:
+
+        data[item["index"]] = item
+
+    return data
 # ==========================================
 # TEST
 # ==========================================

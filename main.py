@@ -117,3 +117,22 @@ def main():
             )
 
         print("=" * 60)
+    # ==========================================
+# ENTRY POINT
+# ==========================================
+
+if __name__ == "__main__":
+
+    print("\nStarting TradingASR AI Pro...\n")
+
+    result = main()
+
+    if result is None:
+
+        print("\n❌ TradingASR AI Failed")
+
+        raise SystemExit(1)
+
+    print("\n✅ TradingASR AI Finished Successfully")
+
+    raise SystemExit(0)

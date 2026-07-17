@@ -219,3 +219,70 @@ def run_watchlist():
         "neutral": neutral
 
     })
+    # ==========================================
+    # INDEX ANALYSIS
+    # ==========================================
+
+    print("\nAnalyzing Indices...")
+
+    index_data = analyze_indices()
+
+    # ==========================================
+    # INDEX CONFIRMATION FILTER
+    # ==========================================
+
+    final_trades = []
+
+    for trade in filtered_trades:
+
+        verdict = trade.get("verdict", "")
+
+        allow_trade = True
+
+        nifty = index_data.get("NIFTY", {})
+
+        nifty_signal = nifty.get("signal", "WAIT")
+
+        # BUY confirmation
+        if "BUY" in verdict:
+
+            if "BUY" not in nifty_signal:
+
+                allow_trade = False
+
+                trade["reasons"].append(
+                    "⚠️ Rejected : NIFTY not supporting BUY"
+                )
+
+        # SELL confirmation
+        elif "SELL" in verdict:
+
+            if "SELL" not in nifty_signal:
+
+                allow_trade = False
+
+                trade["reasons"].append(
+                    "⚠️ Rejected : NIFTY not supporting SELL"
+                )
+
+        if allow_trade:
+
+            final_trades.append(trade)
+
+    print(
+        f"Index Confirmed Trades : {len(final_trades)}"
+    )
+
+    # ==========================================
+    # SORT FINAL TRADES
+    # ==========================================
+
+    final_trades = sorted(
+
+        final_trades,
+
+        key=lambda x: abs(x["score"]),
+
+        reverse=True
+
+    )[:5]

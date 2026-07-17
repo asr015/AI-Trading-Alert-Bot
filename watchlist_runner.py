@@ -48,3 +48,93 @@ def run_watchlist():
     print("\nScanning Watchlist...\n")
 
     watchlist = get_watchlist()
+    # ==========================================
+    # STOCK SCAN LOOP
+    # ==========================================
+
+    for symbol in watchlist:
+
+        try:
+
+            print(f"Scanning : {symbol}")
+
+            data = get_stock_data(symbol)
+
+            if data is None or len(data) < 30:
+
+                print(f"{symbol} : No Data")
+
+                continue
+
+            scanned += 1
+
+            # ==================================
+            # TECHNICAL SCANNER
+            # ==================================
+
+            analysis = calculate_score(data)
+
+            # ==================================
+            # MASTER AI ENGINE
+            # ==================================
+
+            decision = final_ai_score(
+
+                symbol,
+
+                analysis["score"]
+
+            )
+
+            # ==================================
+            # MARKET SUMMARY
+            # ==================================
+
+            verdict = decision["verdict"]
+
+            if "BUY" in verdict:
+
+                bullish += 1
+
+            elif "SELL" in verdict:
+
+                bearish += 1
+
+            else:
+
+                neutral += 1
+
+            # ==================================
+            # SAVE RESULT
+            # ==================================
+
+            trades.append({
+
+                "symbol": symbol,
+
+                "score": decision["score"],
+
+                "setup": analysis.get("setup", ""),
+
+                "verdict": verdict,
+
+                "signal": decision.get("signal", "WAIT"),
+
+                "confidence": decision["confidence"],
+
+                "reasons": analysis["reasons"]
+                + decision["reasons"],
+
+                "entry": analysis["entry"],
+
+                "sl": analysis["sl"],
+
+                "target1": analysis["target1"],
+
+                "target2": analysis["target2"]
+
+            })
+
+        except Exception as e:
+
+            print(f"{symbol} Error : {e}")

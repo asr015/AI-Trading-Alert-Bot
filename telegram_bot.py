@@ -286,3 +286,120 @@ def send_report(summary, option_chain, index_data, trades):
             success = False
 
     return success
+    # ==========================================
+# TELEGRAM RETRY ENGINE
+# ==========================================
+
+import time
+
+
+def send_with_retry(message, retry=3):
+
+    for attempt in range(retry):
+
+        try:
+
+            if send_message(message):
+                return True
+
+        except Exception as e:
+
+            print(
+                f"Retry {attempt+1}/{retry} : {e}"
+            )
+
+        time.sleep(2)
+
+    return False
+
+
+# ==========================================
+# FILTER HIGH PROBABILITY TRADES
+# ==========================================
+
+def filter_high_probability(trades):
+
+    filtered = []
+
+    for trade in trades:
+
+        score = trade.get("score", 0)
+
+        confidence = trade.get("confidence", "0%")
+
+        try:
+            confidence_value = int(
+                confidence.replace("%", "")
+            )
+        except Exception:
+            confidence_value = 0
+
+        setup = trade.get("setup", "")
+
+        # Institutional Quality Filter
+        if (
+
+            abs(score) >= 250
+
+            and confidence_value >= 90
+
+            and (
+                "⭐⭐⭐⭐" in setup
+                or
+                "⭐⭐⭐⭐⭐" in setup
+            )
+
+        ):
+
+            filtered.append(trade)
+
+    filtered.sort(
+
+        key=lambda x: abs(x["score"]),
+
+        reverse=True
+
+    )
+
+    return filtered[:5]
+
+
+# ==========================================
+# MAIN TELEGRAM FUNCTION
+# ==========================================
+
+def send_ai_report(
+
+    summary,
+
+    option_chain,
+
+    index_data,
+
+    trades
+
+):
+
+    trades = filter_high_probability(trades)
+
+    messages = build_message(
+
+        summary,
+
+        option_chain,
+
+        index_data,
+
+        trades
+
+    )
+
+    success = True
+
+    for message in messages:
+
+        if not send_with_retry(message):
+
+            success = False
+
+    return success

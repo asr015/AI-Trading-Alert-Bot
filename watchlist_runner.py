@@ -138,3 +138,84 @@ def run_watchlist():
         except Exception as e:
 
             print(f"{symbol} Error : {e}")
+            # ==========================================
+    # FILTER HIGH PROBABILITY TRADES
+    # ==========================================
+
+    filtered_trades = []
+
+    for trade in trades:
+
+        score = trade.get("score", 0)
+
+        confidence = trade.get("confidence", "0%")
+
+        try:
+
+            confidence = int(
+                confidence.replace("%", "")
+            )
+
+        except Exception:
+
+            confidence = 0
+
+        setup = trade.get("setup", "")
+
+        # ======================================
+        # ELITE FILTER
+        # ======================================
+
+        if (
+
+            abs(score) >= 250
+
+            and confidence >= 90
+
+            and (
+                "⭐⭐⭐⭐" in setup
+                or
+                "⭐⭐⭐⭐⭐" in setup
+            )
+
+        ):
+
+            filtered_trades.append(trade)
+
+    # ==========================================
+    # SORT BEST TRADES
+    # ==========================================
+
+    filtered_trades = sorted(
+
+        filtered_trades,
+
+        key=lambda x: abs(x["score"]),
+
+        reverse=True
+
+    )
+
+    # Only Best Trades
+    filtered_trades = filtered_trades[:5]
+
+    print(
+        f"\nHigh Probability Trades : "
+        f"{len(filtered_trades)}"
+    )
+
+    # ==========================================
+    # MARKET SUMMARY
+    # ==========================================
+
+    summary = create_summary({
+
+        "scanned": scanned,
+
+        "bullish": bullish,
+
+        "bearish": bearish,
+
+        "neutral": neutral
+
+    })

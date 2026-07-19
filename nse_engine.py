@@ -1,5 +1,5 @@
 # ==========================================
-# TradingASR AI Pro v3.0
+# TradingASR AI Pro v4.0
 # File : nse_engine.py
 # ==========================================
 
@@ -29,40 +29,50 @@ HEADERS = {
 session = requests.Session()
 session.headers.update(HEADERS)
 
+_cookie_ready = False
 
-def refresh_session():
 
-    session.cookies.clear()
+def refresh_session(force=False):
+    global _cookie_ready
 
-    response = session.get(
-        BASE_URL,
-        timeout=20
-    )
+    if _cookie_ready and not force:
+        return True
 
-    response.raise_for_status()
+    try:
+        session.cookies.clear()
 
-    time.sleep(1)
+        r = session.get(
+            BASE_URL,
+            timeout=15
+        )
+
+        r.raise_for_status()
+
+        _cookie_ready = True
+        return True
+
+    except Exception as e:
+        print(f"NSE Session Error : {e}")
+        return False
 
 
 def get_option_chain():
 
+    if not refresh_session():
+        return None
+
     last_error = None
 
-    for attempt in range(5):
+    for attempt in range(2):
 
         try:
 
-            refresh_session()
-
             response = session.get(
                 OPTION_CHAIN_URL,
-                timeout=20
+                timeout=15
             )
 
-            if response.status_code != 200:
-                raise Exception(
-                    f"HTTP {response.status_code}"
-                )
+            response.raise_for_status()
 
             data = response.json()
 
@@ -70,9 +80,7 @@ def get_option_chain():
                 "records" not in data
                 or "data" not in data["records"]
             ):
-                raise Exception(
-                    "Invalid NSE Response"
-                )
+                raise ValueError("Invalid NSE Response")
 
             return data
 
@@ -81,11 +89,15 @@ def get_option_chain():
             last_error = str(e)
 
             print(
-                f"NSE Retry {attempt+1}/5 : {last_error}"
+                f"NSE Retry {attempt+1}/2 : {last_error}"
             )
 
-            time.sleep(2)
+            refresh_session(force=True)
 
-    raise Exception(
+            time.sleep(1)
+
+    print(
         f"NSE Option Chain Failed : {last_error}"
-)
+    )
+
+    return None

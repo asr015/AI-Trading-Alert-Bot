@@ -1,5 +1,5 @@
 # ==========================================
-# TradingASR AI Pro v2.3
+# TradingASR AI Pro v2.4
 # File : scanner.py
 # ==========================================
 
@@ -19,7 +19,9 @@ def get_stock_data(symbol):
     if symbol in _cache:
         return _cache[symbol]
 
-    for attempt in range(2):
+    last_error = None
+
+    for attempt in range(3):
 
         try:
 
@@ -30,23 +32,35 @@ def get_stock_data(symbol):
                 auto_adjust=True,
                 progress=False,
                 threads=False,
-                timeout=30
+                timeout=20
             )
 
+            # MultiIndex Fix
             if isinstance(data.columns, pd.MultiIndex):
                 data.columns = data.columns.get_level_values(0)
 
             if data is None or data.empty:
-                raise Exception("No Data")
+                raise ValueError("No Data")
+
+            # Required Columns
+            required = ["Open", "High", "Low", "Close", "Volume"]
+
+            missing = [c for c in required if c not in data.columns]
+
+            if missing:
+                raise ValueError(f"Missing Columns : {missing}")
 
             data = data.dropna()
 
             if data.empty:
-                raise Exception("Empty Data")
+                raise ValueError("Empty Data")
+
+            data = data[~data.index.duplicated(keep="last")]
+
+            data = data.sort_index()
 
             _cache[symbol] = data
 
-            # Prevent unlimited cache growth
             if len(_cache) > 300:
                 _cache.clear()
 
@@ -54,9 +68,11 @@ def get_stock_data(symbol):
 
         except Exception as e:
 
-            if attempt == 1:
-                print(f"{symbol}: {e}")
+            last_error = str(e)
 
-            time.sleep(1)
+            if attempt < 2:
+                time.sleep(1)
+
+    print(f"{symbol}: {last_error}")
 
     return pd.DataFrame()
